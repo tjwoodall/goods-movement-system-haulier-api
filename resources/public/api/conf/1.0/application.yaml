@@ -445,13 +445,13 @@ paths:
                             type: string
                             description: The HTTP method type for the endpoint
                             oneOf:
-                              - title: GET
+                              - enum: [ GET ]
                             example: GET
                           rel:
                             type: string
                             description: A label for the endpoint, which describes how it is related to the current resource. The rel will be self where the action is retrieval of the same resource.
                             oneOf:
-                              - title: get-goods-movement-record
+                              - enum: [ get-goods-movement-record ]
                             example: get-goods-movement-record
                         example:
                           rel: get-goods-movement-record
@@ -900,16 +900,16 @@ paths:
                           type: string
                           description: The HTTP method type for the endpoint
                           oneOf:
-                            - title: PUT
-                            - title: DELETE
+                            - enum: [ PUT ]
+                            - enum: [ DELETE ]
                           example: PUT
                         rel:
                           type: string
                           description: A label for the endpoint, which describes how it is related to the current resource. The rel will be self where the action is retrieval of the same resource.
                           oneOf:
-                            - title: update-goods-movement-record
+                            - enum: [ update-goods-movement-record ]
                               description: The rel for the PUT method
-                            - title: delete-goods-movement-record
+                            - enum: [ delete-goods-movement-record ]
                               description: The rel for the DELETE method
                           example: update-goods-movement-record
                       example:
@@ -1473,15 +1473,15 @@ components:
       description: The state of the GMR
       example: 'NOT_FINALISABLE'
       oneOf:
-        - title: NOT_FINALISABLE
+        - enum: [ NOT_FINALISABLE ]
           description: The GMR is in a non-finalisable state.  This means an update will be required from the haulier prior to check-in.
-        - title: OPEN
+        - enum: [ OPEN ]
           description: The GMR is open for updates and is ready for check-in.
-        - title: CHECKED_IN
+        - enum: [ CHECKED_IN ]
           description: The GMR is checked-in, awaiting embarkation confirmation from the carrier.
-        - title: EMBARKED
+        - enum: [ EMBARKED ]
           description: The GMR is embarked, meaning the goods movement has embarked on its crossing but the goods are awaiting clearance to proceed.
-        - title: COMPLETED
+        - enum: [ COMPLETED ]
           description: The GMR is completed, meaning the goods movement has embarked on its crossing and the goods are clear to proceed.
     gmrStatusVersion:
       type: integer
@@ -1571,13 +1571,13 @@ components:
       example: 'UK_OUTBOUND'
       description: The direction of the movement - into or out of the UK, or between Great Britain and Northern Ireland
       oneOf:
-        - title: UK_INBOUND
+        - enum: [ UK_INBOUND ]
           description: The movement is travelling into the UK
-        - title: UK_OUTBOUND
+        - enum: [ UK_OUTBOUND ]
           description: The movement is travelling out of the UK
-        - title: GB_TO_NI
+        - enum: [ GB_TO_NI ]
           description: The movement is travelling out of Great Britain into Northern Ireland
-        - title: NI_TO_GB
+        - enum: [ NI_TO_GB ]
           description: The movement is travelling out of Northern Ireland into Great Britain
     vehicleRegNum:
       type: string
@@ -1687,17 +1687,17 @@ components:
       description: The type of haulier moving the goods
       example: 'STANDARD'
       oneOf:
-      - title: STANDARD
+      - enum: [ STANDARD ]
         description: All hauliers that are not one of the other types
-      - title: FPO_ASN
+      - enum: [ FPO_ASN ]
         description: Fast parcel operators that are members of the Anti-Smuggling Network
-      - title: FPO_OTHER
+      - enum: [ FPO_OTHER ]
         description: Fast parcel operators that are not members of the ASN and are not moving goods with a Memorandum of Understanding
-      - title: NATO_MOD
+      - enum: [ NATO_MOD ]
         description: NATO or MoD
-      - title: RMG
+      - enum: [ RMG ]
         description: Royal Mail Group
-      - title: ETOE
+      - enum: [ ETOE ]
         description: Extra-Territorial Office of Exchange
     eidrDeclarations:
       type: array
@@ -1790,7 +1790,7 @@ components:
     procedureCode:
       type: string
       description: A pre-defined HMRC code that is used to determine how the shipment will be processed and how the duties and taxes, if applicable, will be collected.
-      example: AB12
+      example: '1212'
       pattern: ^[0-9]{4}$
     emptyVehicle:
       type: object

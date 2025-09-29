@@ -1,0 +1,714 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "#/gmr-types",
+  "definitions": {
+    "gmrId": {
+      "$id": "#/definitions/gmrId",
+      "type": "string",
+      "description": "The Goods Movement Record (GMR) ID for this GMR.  Do not include when POSTing a GMR - GVMS will assign an ID.",
+      "examples": [
+        "GMRA000002JR"
+      ],
+      "pattern": "^GMR[A-Z][0-9A-Z]{8}$"
+    },
+    "state": {
+      "$id": "#/definitions/state",
+      "type": "string",
+      "description": "The state of the GMR",
+      "examples": [
+        "NOT_FINALISABLE"
+      ],
+      "oneOf": [
+        { "enum": ["NOT_FINALISABLE"], "description": "The GMR is in a non-finalisable state.  This means an update will be required from the haulier prior to check-in." },
+        { "enum": ["OPEN"], "description": "The GMR is open for updates and is ready for check-in." },
+        { "enum": ["CHECKED_IN"], "description": "The GMR is checked-in, awaiting embarkation confirmation from the carrier." },
+        { "enum": ["EMBARKED"], "description": "The GMR is embarked, meaning the goods movement has embarked on its crossing but the goods are awaiting clearance to proceed." },
+        { "enum": ["COMPLETED"], "description": "The GMR is completed, meaning the goods movement has embarked on its crossing and the goods are clear to proceed." }
+      ]
+    },
+    "gmrStatusVersion": {
+      "$id": "#/properties/gmrStatusVersion",
+      "type": "integer",
+      "description": "The version number of the latest status notification for this GMR.  Each new notification for a given GMR will have a greater gmrStatusVersion than the last.",
+      "examples": [
+        4
+      ]
+    },
+    "inspectionRequired": {
+      "$id": "#/definitions/inspectionRequired",
+      "type": "boolean",
+      "description": "If set to true, indicates that the vehicle requires a customs inspection.  If set to false, indicates that the vehicle does not require a customs inspection.  If not set, indicates the customs inspection decision has not yet been made or is not applicable.  For outbound GMRs, this indicates that the vehicle must present at an inspection facility prior to checking-in at the port.  For Office of Transit inspections for inbound GMRs, a decision may be made to inspect subsequent to a notification that inspection is not required.  In this event a notification will be sent that changes inspectionRequired from false to true.  If this happens after leaving the port of arrival, the inspection should be carried out at the next transit office e.g. the office of destination."
+    },
+    "createdDateTime": {
+      "$id": "#/definitions/createdDateTime",
+      "type": "string",
+      "description": "The date and time that this GMR was created.",
+      "examples": [
+        "2021-08-11T10:58:12"
+      ],
+      "pattern": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d.\\d{3}Z$"
+    },
+    "updatedDateTime": {
+      "$id": "#/definitions/updatedDateTime",
+      "type": "string",
+      "description": "The date and time that this GMR was last updated.",
+      "examples": [
+        "2021-08-12T15:34:02"
+      ],
+      "pattern": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d.\\d{3}Z$"
+    },
+    "ruleFailures": {
+      "$id": "#/definitions/ruleFailures",
+      "type": "array",
+      "description": "If the GMR is not finalisable, the reasons why are listed here.  These must be rectified in subsequent calls to the PUT API prior to check-in.",
+      "items": {
+        "$id": "#/properties/ruleFailures/items",
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "code",
+          "technicalMessage"
+        ],
+        "properties": {
+          "code": {
+            "$id": "#/properties/ruleFailures/items/properties/code",
+            "type": "string",
+            "description": "A code indicating the ID of the rule that failed",
+            "examples": [
+              "007"
+            ]
+          },
+          "technicalMessage": {
+            "$id": "#/properties/ruleFailures/items/properties/technicalMessage",
+            "type": "string",
+            "description": "A message describing the rule that failed",
+            "examples": [
+              "Safety and Security MRN not found"
+            ]
+          },
+          "field": {
+            "$id": "#/properties/ruleFailures/items/properties/field",
+            "type": "string",
+            "description": "A JSONPath pointing to the field that this rule failure concerns. Only included if the rule concerns a specific field e.g. a specific MRN.",
+            "examples": [
+              "$.customsDeclarations[2].sAndSMasterRefNum"
+            ]
+          },
+          "value": {
+            "$id": "#/properties/ruleFailures/items/properties/value",
+            "type": "string",
+            "description": "The value of the JSON field that this rule failure concerns. Only included if the rule concerns a specific field e.g. a specific MRN.",
+            "examples": [
+              "GB1343113534"
+            ]
+          }
+        }
+      }
+    },
+    "metadata": {
+      "$id": "#/definitions/metadata",
+      "type": "object",
+      "description": "Information from the Goods Vehicle Movement Service about this GMR.",
+      "required": [
+        "state",
+        "gmrStatusVersion",
+        "createdDateTime",
+        "updatedDateTime"
+      ],
+      "properties": {
+        "state": { "$ref": "#/definitions/state" },
+        "gmrStatusVersion": { "$ref":  "#/definitions/gmrStatusVersion" },
+        "inspectionRequired": { "$ref": "#/definitions/inspectionRequired" },
+        "reportToLocations": { "$ref": "#/definitions/reportToLocations" },
+        "createdDateTime": { "$ref": "#/definitions/createdDateTime" },
+        "updatedDateTime": { "$ref": "#/definitions/updatedDateTime" },
+        "ruleFailures": { "$ref": "#/definitions/ruleFailures" }
+      }
+    },
+    "haulierEORI": {
+      "$id": "#/definitions/haulierEORI",
+      "type": "string",
+      "description": "The EORI of the haulier that is responsible for the vehicle making the goods movement",
+      "examples": [
+        "GB123456789012"
+      ],
+      "pattern": "^GB[0-9]{12,15}$"
+    },
+    "isUnaccompanied": {
+      "$id": "#/properties/isUnaccompanied",
+      "type": "boolean",
+      "description": "Set to true if the vehicle will not be accompanying the trailer(s) during the crossing, or if the vehicle is carrying a container that will be detached and loaded for the crossing.",
+      "examples": [
+        false
+      ]
+    },
+    "isOwnVehicle": {
+      "$id": "#/properties/isOwnVehicle",
+      "type": "boolean",
+      "description": "Set to false if the haulier is moving the goods vehicle under a contract of carriage.  Set to true if there is no contract of carriage.",
+      "examples": [
+        false
+      ]
+    },
+    "isTSAD": {
+      "$id": "#/properties/isTSAD",
+      "type": "boolean",
+      "description": "Set to true if the transit declaration is a TSAD, otherwise set to false (for a TAD)",
+      "examples": [
+        false
+      ]
+    },
+    "direction": {
+      "$id": "#/definitions/direction",
+      "type": "string",
+      "examples": [
+        "UK_OUTBOUND"
+      ],
+      "description": "The direction of the movement - into or out of the UK, or between Great Britain and Northern Ireland",
+      "oneOf": [
+        { "enum": ["UK_INBOUND"], "description": "The movement is travelling into the UK" },
+        { "enum": ["UK_OUTBOUND"], "description": "The movement is travelling out of the UK" },
+        { "enum": ["GB_TO_NI"], "description": "The movement is travelling out of Great Britain into Northern Ireland" },
+        { "enum": ["NI_TO_GB"], "description": "The movement is travelling out of Northern Ireland into Great Britain" }
+      ]
+    },
+    "vehicleRegNum": {
+      "$id": "#/definitions/vehicleRegNum",
+      "type": "string",
+      "description": "Vehicle registration number of the vehicle that will arrive at port.  If isUnaccompanied is set to false then vehicleRegNum must be provided to check-in.",
+      "examples": [
+        "AB19 DEF"
+      ],
+      "pattern": "^[A-Z0-9-](?:[A-Z0-9 -]{1,30})?$"
+    },
+    "trailerRegistrationNums": {
+      "$id": "#/definitions/trailerRegistrationNums",
+      "type": "array",
+      "description": "For vehicles carrying trailers, the trailer registration number of each trailer.  If isUnaccompanied is set to true then trailerRegistrationNums or containerReferenceNums must be provided before check-in.",
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "$id": "#/properties/trailerRegistrationNums/items",
+        "type": "string",
+        "examples": [
+          "A1234567", "B2345678"
+        ],
+        "pattern": "^[A-Z0-9-](?:[A-Z0-9 -]{1,199})?$"
+      }
+    },
+    "containerReferenceNums": {
+      "$id": "#/definitions/containerReferenceNums",
+      "type": "array",
+      "description": "For vehicles arriving with containers that will be detached and loaded, the container reference number of each container in the movement. If isUnaccompanied is set to true then trailerRegistrationNums or containerReferenceNums must be provided before check-in.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$id": "#/properties/containerReferenceNums/items",
+        "type": "string",
+        "examples": [
+          "CSQU3054383", "CSQU3054392"
+        ],
+        "pattern": "^[A-Z0-9-](?:[A-Z0-9 -]{1,199})?$"
+      }
+    },
+    "plannedCrossing": {
+      "$id": "#/definitions/plannedCrossing",
+      "type": "object",
+      "description": "Details of the planned crossing.",
+      "required": [
+        "routeId"
+      ],
+      "properties": {
+        "routeId": { "$ref": "#/definitions/routeId" },
+        "localDateTimeOfDeparture": { "$ref": "#/definitions/localDateTimeOfDeparture" }
+      },
+      "additionalProperties": false
+    },
+    "checkedInCrossing": {
+      "$id": "#/definitions/checkedInCrossing",
+      "type": "object",
+      "description": "Details of the crossing that the vehicle has been checked-in to. These details will only be present in the Goods Movement Record after the vehicle has checked in.",
+      "required": [
+        "routeId",
+        "localDateTimeOfArrival"
+      ],
+      "properties": {
+        "routeId": { "$ref": "#/definitions/routeId" },
+        "localDateTimeOfArrival": { "$ref": "#/definitions/localDateTimeOfArrival" }
+      },
+      "additionalProperties": false
+    },
+    "actualCrossing": {
+      "$id": "#/definitions/actualCrossing",
+      "type": "object",
+      "description": "Details of the crossing that the goods movement has been embarked on. These details will only be present in the Goods Movement Record after the vehicle has embarked on a crossing.",
+      "required": [
+        "routeId",
+        "localDateTimeOfArrival"
+      ],
+      "properties": {
+        "routeId": { "$ref": "#/definitions/routeId" },
+        "localDateTimeOfArrival": { "$ref": "#/definitions/localDateTimeOfArrival" }
+      },
+      "additionalProperties": false
+    },
+    "reportToLocations": {
+      "$id": "#/properties/reportToLocations",
+      "type": "array",
+      "description": "A list of one or more inspection types, from GVMS Reference Data, that the vehicle must have carried out, in the order specified.  This means that where there are multiple entries here, the vehicle must report for the first inspection type listed before each subsequent listed inspection.  Each entry includes a list of available locations for the inspection type.",
+      "minItems": 1,
+      "items": {
+        "$id": "#/properties/reportToLocations/items",
+        "type": "object",
+        "description": "Information about an inspection that is required",
+        "examples": [
+          {
+            "inspectionTypeId": "1",
+            "locationIds": [
+              "L0029A",
+              "L0030A"
+            ]
+          }
+        ],
+        "required": [
+          "inspectionTypeId",
+          "locationIds"
+        ],
+        "properties": {
+          "inspectionTypeId": {
+            "$id": "#/properties/reportToLocations/items/properties/inspectionTypeId",
+            "type": "string",
+            "description": "An inspectionTypeId from GVMS Reference Data denoting the type of inspection that needs to be performed on the vehicle.",
+            "pattern": "^[0-9A-Za-z\\-_]{1,100}$",
+            "examples": [
+              "7"
+            ]
+          },
+          "locationIds": {
+            "$id": "#/properties/reportToLocations/items/properties/locationIds",
+            "type": "array",
+            "description": "A list of locationIds from GVMS Reference Data that are available to perform this type of inspection.",
+            "items": {
+              "type": "string",
+              "pattern": "^[0-9A-Za-z\\-_]{1,100}$"
+            },
+            "examples": [
+              [
+                "L0029A",
+                "L0030A"
+              ]
+            ]
+          }
+        }
+      }
+    },
+    "routeId": {
+      "$id": "#/definitions/routeId",
+      "type": "string",
+      "description": "The ID of the crossing route, using a routeId from the GVMS reference data",
+      "default": "",
+      "examples": [
+        "18273"
+      ],
+      "pattern": "^[A-Z0-9-]{1,200}$"
+    },
+    "localDateTimeOfDeparture": {
+      "$id": "#/definitions/localDateTimeOfDeparture",
+      "type": "string",
+      "description": "The planned date and time of departure, in local time of the departure port. Must not include seconds, time zone or UTC marker",
+      "examples": [
+        "2021-08-11T10:58"
+      ],
+      "pattern": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d$"
+    },
+    "localDateTimeOfArrival": {
+      "$id": "#/definitions/localDateTimeOfArrival",
+      "type": "string",
+      "description": "The planned date and time of arrival, in local time of the arrival port. Must not include seconds, time zone or UTC marker",
+      "examples": [
+        "2021-08-11T10:58"
+      ],
+      "pattern": "^\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d$"
+    },
+    "haulierType": {
+      "$id": "#/definitions/haulierType",
+      "type": "string",
+      "examples": [
+        "STANDARD"
+      ],
+      "description": "The type of haulier moving the goods",
+      "oneOf": [
+        { "enum": ["STANDARD"], "description": "All hauliers that are not one of the other types" },
+        { "enum": ["FPO_ASN"], "description": "Fast parcel operators that are members of the Anti-Smuggling Network" },
+        { "enum": ["FPO_OTHER"], "description": "Fast parcel operators that are not members of the ASN and are not moving goods with a Memorandum of Understanding" },
+        { "enum": ["NATO_MOD"], "description": "NATO or MoD" },
+        { "enum": ["RMG"], "description": "Royal Mail Group" },
+        { "enum": ["ETOE"], "description": "Extra-Territorial Office of Exchange" }
+      ]
+    },
+    "eidrDeclarations": {
+      "$id": "#/definitions/eidrDeclarations",
+      "type": "array",
+      "description": "Details of one or more EIDR declarations.  Must be provided prior to check-in for EIDR movements.  For movements using a specially-issued EORI, the same EORI may be entered multiple times, one entry for each ENS S&S MRN travelling under EIDR.",
+      "items": {
+        "$id": "#/definitions/eidrDeclarations/items",
+        "type": "object",
+        "required": [
+          "traderEORI"
+        ],
+        "properties": {
+          "traderEORI": {
+            "$id": "#/definitions/eidrDeclarations/traderEORI",
+            "type": "string",
+            "description": "The trader's EORI, GB EORIs are valid for all direction movements, and XI EORIs are valid for only GB to NI movements.",
+            "examples": [
+              "GB123456789012",
+              "DE123456789012"
+            ],
+            "pattern": "^[A-Z]{2}[0-9]{12,15}$"
+          },
+          "sAndSMasterRefNum": { "$ref": "#/definitions/sAndSMasterRefNum" },
+          "localReferenceNumber": { "$ref": "#/definitions/localReferenceNumber" },
+          "procedureCode": { "$ref": "#/definitions/procedureCode" }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "ukimsEidrDeclarations": {
+      "$id": "#/definitions/ukimsEidrDeclarations",
+      "type": "array",
+      "description": "Details of one or more UKIMS EIDR declarations.",
+      "items": {
+        "$id": "#/definitions/ukimsEidrDeclarations/items",
+        "type": "object",
+        "required": [
+          "traderEORI"
+        ],
+        "properties": {
+          "traderEORI": {
+            "$id": "#/definitions/ukimsEidrDeclarations/traderEORI",
+            "type": "string",
+            "description": "The trader's EORI, only XI EORIs are valid",
+            "examples": [
+              "XI123456789012",
+              "XI123456789013"
+            ],
+            "pattern": "^[A-Z]{2}[0-9]{12,15}$"
+          },
+          "nopWaiver": { "type": "boolean" },
+          "localReferenceNumber": { "$ref": "#/definitions/localReferenceNumber" },
+          "sAndSMasterRefNum": { "$ref": "#/definitions/sAndSMasterRefNum" }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "tirDeclarations": {
+      "$id": "#/definitions/tirDeclarations",
+      "type": "array",
+      "description": "Details of one or more TIR Carnet declarations.  Must be provided prior to check-in for TIR movements.",
+      "items": {
+        "$id": "#/definitions/tirDeclarations/items",
+        "type": "object",
+        "required": [
+          "tirCarnetId"
+        ],
+        "properties": {
+          "tirCarnetId": { "$ref": "#/definitions/tirCarnetId" },
+          "sAndSMasterRefNum": { "$ref": "#/definitions/sAndSMasterRefNum", "description": "The master reference number or Movement Reference Number (MRN) for a Safety & Security declaration, where applicable. This must be supplied when the S&S declaration covers TIR Carnet consignments within a trailer. This applies to both ENS and EXS declarations.  If there is one, include the S&S MRN for the TIR declaration above here." }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "ataDeclarations": {
+      "$id": "#/definitions/ataDeclarations",
+      "type": "array",
+      "description": "Details of one or more ATA Carnet declarations.  Must be provided prior to check-in for ATA movements.",
+      "items": {
+        "$id": "#/definitions/ataDeclarations/items",
+        "type": "object",
+        "required": [
+          "ataCarnetId"
+        ],
+        "properties": {
+          "ataCarnetId": { "$ref": "#/definitions/ataCarnetId" },
+          "sAndSMasterRefNum": { "$ref": "#/definitions/sAndSMasterRefNum", "description": "The master reference number or Movement Reference Number (MRN) for a Safety & Security declaration, where applicable. This must be supplied when the S&S declaration covers ATA Carnet consignments within a trailer. This applies to both ENS and EXS declarations.  If there is one, include the S&S MRN for the TIR declaration above here." }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "fpoEORI": {
+      "$id": "#/definitions/fpoEORI",
+      "type": "string",
+      "description": "GB or XI EORI for UK-C",
+      "examples": [
+        "GB123456789012",
+        "XI123456789012"
+      ],
+      "pattern": "^(GB|XI)[0-9]{12,15}$"
+    },
+    "emptyVehicle": {
+      "$id": "#/definitions/emptyVehicle",
+      "type": "object",
+      "description": "Declares that this is an empty movement and contains details about the empty movement.  Must be provided prior to check-in for empty movements.",
+      "required": [
+        "isOwnVehicle"
+      ],
+      "properties": {
+        "isOwnVehicle": { "$ref": "#/definitions/isOwnVehicle" },
+        "sAndSMasterRefNum": { "$ref": "#/definitions/sAndSMasterRefNum", "description": "The master reference number or Movement Reference Number (MRN) for a Safety & Security declaration, where applicable. This must be supplied when the S&S declaration covers a trailer that is moving under a contract of carriage. This applies to both ENS and EXS declarations." }
+      },
+      "additionalProperties": false
+    },
+    "ukcDeclaration": {
+      "$id": "#/definitions/ukcDeclaration",
+      "type": "object",
+      "description": "Details of UK-C declaration.",
+      "required": [
+        "fpoEORI"
+      ],
+      "properties": {
+        "fpoEORI": { "$ref": "#/definitions/fpoEORI" }
+      },
+      "additionalProperties": false
+    },
+    "dbcDeclaration": {
+      "$id": "#/definitions/dbcDeclaration",
+      "type": "object",
+      "description": "Declares goods moving under Declaration by Conduct.  Refer to the Oral and By Conduct List published at gov.uk for details.",
+      "required": [
+        "isOwnVehicle"
+      ],
+      "properties": {
+        "isOwnVehicle": { "$ref": "#/definitions/isOwnVehicle" },
+        "dbcGoods": { "$ref": "#/definitions/dbcGoods" }
+      },
+      "additionalProperties": false
+    },
+    "dbcGoods": {
+      "$id": "#/definitions/dbcGoods",
+      "type": "array",
+      "description": "References for a Declaration by Conduct goods load.",
+      "items": {
+        "$id": "#/definitions/dbcGoods/items",
+        "type": "object",
+        "required": [
+          "sAndSMasterRefNum"
+        ],
+        "properties": {
+          "sAndSMasterRefNum": { "$ref": "#/definitions/sAndSMasterRefNum", "description": "The master reference number or Movement Reference Number (MRN) for a Safety & Security declaration, where applicable. This may be required when the S&S declaration covers a DBC that is moving under a contract of carriage. This applies to both ENS and EXS declarations." }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "customsDeclarations": {
+      "$id": "#/definitions/customsDeclarations",
+      "type": "array",
+      "description": "Details of the customs declarations within this goods load.",
+      "items": {
+        "$id": "#/definitions/customsDeclarations/items",
+        "type": "object",
+        "required": [
+          "customsDeclarationId"
+        ],
+        "properties": {
+          "customsDeclarationId": { "$ref": "#/definitions/customsDeclarationId" },
+          "customsDeclarationPartId": { "$ref": "#/definitions/customsDeclarationPartId" },
+          "sAndSMasterRefNum": { "$ref": "#/definitions/sAndSMasterRefNum", "description": "The master reference number or Movement Reference Number (MRN) for a Safety & Security declaration, where applicable. This must be supplied when the S&S declaration covers individual consignments within a trailer. This applies to both ENS and EXS declarations.  If there is one, include the S&S MRN for the customs declaration above here." }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "sAndSMasterRefNums": {
+      "$id": "#/definitions/sAndSMasterRefNums",
+      "type": "array",
+      "description": "The master reference numbers or Movement Reference Numbers (MRNs) for Safety & Security declarations - should be supplied where applicable.",
+      "minItems": 1,
+      "maxItems": 2500,
+      "uniqueItems": true,
+      "items": {
+        "$id": "#/definitions/sAndSMasterRefNums/items",
+        "type": "object",
+        "required": [
+          "masterRefNum"
+        ],
+        "properties": {
+          "masterRefNum": { "$ref": "#/definitions/sAndSMasterRefNum" }
+        }
+      }
+    },
+    "transitDeclarations": {
+      "$id": "#/definitions/transitDeclarations",
+      "type": "array",
+      "description": "Details of the transit declarations within this goods load.",
+      "items": {
+        "$id": "#/definitions/transitDeclarations/items",
+        "type": "object",
+        "required": [
+          "transitDeclarationId",
+          "isTSAD"
+        ],
+        "properties": {
+          "transitDeclarationId": { "$ref": "#/definitions/transitDeclarationId" },
+          "isTSAD":  { "$ref": "#/definitions/isTSAD" },
+          "sAndSMasterRefNum": { "$ref": "#/definitions/sAndSMasterRefNum", "description": "The master reference number or Movement Reference Number (MRN) for a Safety & Security declaration, where applicable. This must be supplied when the S&S declaration covers individual Transit consignments within a trailer. This applies to both ENS and EXS declarations.  If there is one, include the S&S MRN for the Transit declaration above here." }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "mtpDeclaration": {
+      "$id": "#/definitions/mtpDeclaration",
+      "type": "object",
+      "description": "Details of a stamped, paper-based declaration using a Manual Transit Procedure (MTP).  Only intended for use when technical issues prevent use of Transit IT systems.",
+      "properties": {
+        "mtpGoods": { "$ref": "#/definitions/mtpGoods" }
+      },
+      "additionalProperties": false
+    },
+    "mtpGoods": {
+      "$id": "#/definitions/mtpGoods",
+      "type": "array",
+      "description": "References for goods loads moving under a stamped paper MTP.",
+      "items": {
+        "$id": "#/definitions/mtpGoods/items",
+        "type": "object",
+        "required": [
+          "sAndSMasterRefNum"
+        ],
+        "properties": {
+          "sAndSMasterRefNum": { "$ref": "#/definitions/sAndSMasterRefNum" }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "indirectExportDeclarations": {
+      "$id": "#/definitions/indirectExportDeclarations",
+      "type": "array",
+      "description": "Details of the indirect export declarations within this goods load.  Only valid for NI to GB movements where the goods originated from outside UK.",
+      "items": {
+        "$id": "#/definitions/indirectExportDeclarations/items",
+        "type": "object",
+        "required": [
+          "eadMasterRefNum"
+        ],
+        "properties": {
+          "eadMasterRefNum": { "$ref": "#/definitions/eadMasterRefNum" }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "exemptionDeclaration": {
+      "$id": "#/definitions/exemptionDeclaration",
+      "type": "object",
+      "description": "Declares Royal Mail Group or ETOE goods in the movement that do not require a customs declaration.",
+      "properties": {
+        "exemptedGoods": { "$ref": "#/definitions/exemptedGoods", "description": "The list of goods loads exempted from customs.  Used for GB>NI RMG <£900 B2B or GB>EU FPO+MOU goods loads." }
+      },
+      "additionalProperties": false
+    },
+    "exemptedGoods": {
+      "$id": "#/definitions/exemptedGoods",
+      "type": "array",
+      "description": "References for a goods load that is exempted from customs.",
+      "items": {
+        "$id": "#/definitions/exemptedGoods/items",
+        "type": "object",
+        "properties": {
+          "sAndSMasterRefNum": { "$ref": "#/definitions/sAndSMasterRefNum", "description": "The MRN or DUCR (depending on direction) for an ENS or EXS Safety & Security declaration for this goods load."}
+        },
+        "required": [ 
+          "sAndSMasterRefNum" 
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "customsDeclarationId": {
+      "$id": "#/definitions/customsDeclarationId",
+      "type": "string",
+      "description": "This is the identifier for a customs declaration from Customs Declaration Service (CDS) or CHIEF.\nFor inbound movements declared in CDS it is a MRN, for example 19GB4S24GC3PPFGVR7.\nFor inbound movements declared in CHIEF it is an ERN, for example 999123456C20210615.\nFor outbound movements declared in either CDS or CHIEF it is a DUCR, for example 0GB689223596000-SE119404.",
+      "examples": [
+        "19GB4S24GC3PPFGVR7",
+        "999123456C20210615",
+        "0GB689223596000-SE119404"
+      ],
+      "pattern": "^[A-Z0-9-)(/]{1,200}$"
+    },
+    "customsDeclarationPartId": {
+      "$id": "#/definitions/customsDeclarationPartId",
+      "type": "string",
+      "description": "Supported in Production environment after 5 September 2021.  If a DUCR from CHIEF has been added in customsDeclarationId, this is the optional part ID.  Must match the part ID for the declaration entered in CHIEF including any leading zeroes.",
+      "examples": [
+        "205J",
+        "03B"
+      ],
+      "pattern": "^[0-9]{1,3}[A-Z]?$"
+    },
+    "tirCarnetId": {
+      "$id": "#/definitions/tirCarnetId",
+      "type": "string",
+      "description": "The TIR Carnet ID for the carnet within a TIR goods movement",
+      "examples": [
+        "ABC/123"
+      ],
+      "pattern": "^.{1,200}$"
+    },
+    "ataCarnetId": {
+      "$id": "#/definitions/ataCarnetId",
+      "type": "string",
+      "description": "The ATA Carnet ID for the carnet within an ATA goods movement",
+      "examples": [
+        "ABC/123"
+      ],
+      "pattern": "^.{1,200}$"
+    },
+    "sAndSMasterRefNum": {
+      "$id": "#/definitions/sAndSMasterRefNum",
+      "type": "string",
+      "description": "The master reference number (MRN) for a Safety & Security declaration, where applicable.",
+      "examples": [
+        "GB12323020392"
+      ],
+      "pattern": "^[A-Z0-9-)(/]{1,200}$"
+    },
+    "transitDeclarationId": {
+      "$id": "#/definitions/transitDeclarationId",
+      "type": "string",
+      "description": "This is the Transit MRN issued by the Office of Departure.  Must be provided.",
+      "examples": [
+        "18AT320000TVWJYM68"
+      ],
+      "pattern": "^\\d{2}[A-Z]{2}[A-Z0-9]{14}$"
+    },
+    "eadMasterRefNum": {
+      "$id": "#/definitions/eadMasterRefNum",
+      "type": "string",
+      "description": "The master or movement reference number (MRN) of the Export Accompanying Document (EAD) for this indirect export.",
+      "examples": [
+        "19IE294000AFGRIG29"
+      ],
+      "pattern": "^\\d{2}(?!GB|XI)[A-Z]{2}[A-Z0-9]{14}$"
+    },
+    "localReferenceNumber": {
+      "$id": "#/definitions/localReferenceNumber",
+      "type": "string",
+      "description": "It is only used for EIDR and UKIMS EIDR declarations in the GB_TO_NI direction",
+      "pattern": "^[A-Z0-9]{1,22}$"
+    },
+    "procedureCode": {
+      "$id": "#/definitions/procedureCode",
+      "type": "string",
+      "description": "It is only used for EIDR declarations in the GB_TO_NI direction",
+      "pattern": "^[0-9]{4}$"
+    }
+  }
+}

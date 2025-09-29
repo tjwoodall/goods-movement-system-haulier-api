@@ -1,0 +1,1986 @@
+openapi: 3.0.0
+info:
+  title: Goods Vehicle Movements
+  version: '1.0'
+  description: API for creating and amending Goods Movement Records (GMRs) in the Goods Vehicle Movement Service
+servers:
+  - url: https://api.service.hmrc.gov.uk/
+    variables: {}
+paths:
+  "/customs/goods-movement-system/movements":
+    post:
+      description:
+        <p>This endpoint is used to create a Goods Movement Record (GMR)</p>
+
+        <p>When creating, you can provide the full record or you can provide incomplete information and update it later using the Update GMR endpoint.</p>
+
+        <p>Check-in will not be possible until the record is fully updated.</p>
+
+        <p>If the GMR you POST is schematically invalid, you will receive details of the schematic errors in a 400 error response.</p>
+
+        <p>If the GMR you POST is schematically valid, the endpoint will respond with a 202 Accepted and you will receive a notification
+        after a few seconds detailing the status of the GMR.  This notification will confirm if the GMR is "open", i.e.  ready to be checked-in
+        or "not finalisable", i.e. an update to the GMR is required.</p>
+
+        <p>If it is "not finalisable" then the parts of the GMR that are invalid or missing will be identified in the notification.</p>
+      operationId: Create Goods Movement Record
+      parameters:
+        - $ref: '#/components/parameters/Content-Type'
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Authorization'
+      security:
+        - userRestricted:
+          - write:goods-movement-system
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - direction
+              not:
+                anyOf:
+                  - required:
+                      - emptyVehicle
+                      - customsDeclarations
+                  - required:
+                      - emptyVehicle
+                      - transitDeclarations
+                  - required:
+                      - emptyVehicle
+                      - tirDeclarations
+                  - required:
+                      - emptyVehicle
+                      - ataDeclarations
+                  - required:
+                      - emptyVehicle
+                      - eidrDeclarations
+                  - required:
+                      - emptyVehicle
+                      - ukimsEidrDeclarations
+                  - required:
+                      - emptyVehicle
+                      - indirectExportDeclarations
+                  - required:
+                      - emptyVehicle
+                      - dbcDeclaration
+                  - required:
+                      - emptyVehicle
+                      - exemptionDeclaration
+                  - required:
+                      - emptyVehicle
+                      - ukcDeclaration
+              properties:
+                direction:
+                  $ref: '#/components/schemas/direction'
+                haulierType:
+                  $ref: '#/components/schemas/haulierType'
+                isUnaccompanied:
+                  $ref: '#/components/schemas/isUnaccompanied'
+                vehicleRegNum:
+                  $ref: '#/components/schemas/vehicleRegNum'
+                trailerRegistrationNums:
+                  $ref: '#/components/schemas/trailerRegistrationNums'
+                containerReferenceNums:
+                  $ref: '#/components/schemas/containerReferenceNums'
+                plannedCrossing:
+                  $ref: '#/components/schemas/plannedCrossing'
+                sAndSMasterRefNums:
+                  $ref: '#/components/schemas/sAndSMasterRefNums'
+                customsDeclarations:
+                  $ref: '#/components/schemas/customsDeclarations'
+                mtpDeclaration:
+                  $ref: '#/components/schemas/mtpDeclaration'
+                transitDeclarations:
+                  $ref: '#/components/schemas/transitDeclarations'
+                tirDeclarations:
+                  $ref: '#/components/schemas/tirDeclarations'
+                ataDeclarations:
+                  $ref: '#/components/schemas/ataDeclarations'
+                eidrDeclarations:
+                  $ref: '#/components/schemas/eidrDeclarations'
+                ukimsEidrDeclarations:
+                  $ref: '#/components/schemas/ukimsEidrDeclarations'
+                indirectExportDeclarations:
+                  $ref: '#/components/schemas/indirectExportDeclarations'
+                emptyVehicle:
+                  $ref: '#/components/schemas/emptyVehicle'
+                dbcDeclaration:
+                  $ref: '#/components/schemas/dbcDeclaration'
+                exemptionDeclaration:
+                  $ref: '#/components/schemas/exemptionDeclaration'
+                ukcDeclaration:
+                  $ref: '#/components/schemas/ukcDeclaration'
+              additionalProperties: false
+            examples:
+              example-1:
+                value:
+                  direction: UK_OUTBOUND
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  plannedCrossing:
+                    routeId: '63'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  customsDeclarations:
+                    - customsDeclarationId: 0GB689223596000-SE119404
+                    - customsDeclarationId: 0GB689223596000-SE119405
+                    - customsDeclarationId: 0GB689223596000-SE119406
+                      customsDeclarationPartId: 34J
+                  transitDeclarations:
+                    - transitDeclarationId: 10GB00002910B75BE5
+                      isTSAD: true
+                    - transitDeclarationId: 10GB00002910B75BE6
+                      sAndSMasterRefNum: 5GB123456789012-ABC/1234
+                      isTSAD: false
+              example-2:
+                value:
+                  direction: GB_TO_NI
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  trailerRegistrationNums:
+                    - KF293716
+                    - GH28372S
+                  plannedCrossing:
+                    routeId: '303'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  eidrDeclarations:
+                    - traderEORI: GB123456789012
+                      sAndSMasterRefNum: 20GB01I0XLM976S003
+              example-3:
+                value:
+                  direction: UK_INBOUND
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  plannedCrossing:
+                    routeId: '60'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  emptyVehicle:
+                    isOwnVehicle: false
+                    sAndSMasterRefNum: 20GB01I0XLM976S003
+              example-4:
+                value:
+                  direction: UK_OUTBOUND
+                  isUnaccompanied: true
+                  containerReferenceNums:
+                    - CSQU3054383
+                  plannedCrossing:
+                    routeId: '63'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  ataDeclarations:
+                    - ataCarnetId: SDOEFOK2982893
+              example-5:
+                value:
+                  direction: GB_TO_NI
+                  isUnaccompanied: true
+                  trailerRegistrationNums:
+                    - KF293716
+                    - GH28372S
+                  plannedCrossing:
+                    routeId: '303'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  sAndSMasterRefNums:
+                    - masterRefNum: 19GB4S24GC3PPFGVR7
+                    - masterRefNum: 19GB4S24GC3PPFGVR8
+                  tirDeclarations:
+                    - tirCarnetId: FEOKEOK092927
+              example-6:
+                value:
+                  direction: NI_TO_GB
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  plannedCrossing:
+                    routeId: '304'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  indirectExportDeclarations:
+                    - eadMasterRefNum: 20IE01I0XLM976S003
+                    - eadMasterRefNum: 20IE01I0XLM976S004
+              example-7:
+                value:
+                  direction: UK_OUTBOUND
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  trailerRegistrationNums:
+                    - KF293716
+                    - GH28372S
+                  plannedCrossing:
+                    routeId: '63'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  dbcDeclaration:
+                    isOwnVehicle: false
+                    dbcGoods:
+                      - sAndSMasterRefNum: GB12323020392
+                      - sAndSMasterRefNum: GB12323020393
+              example-8:
+                value:
+                  direction: UK_INBOUND
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  plannedCrossing:
+                    routeId: '60'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  mtpDeclaration:
+                    mtpGoods:
+                      - sAndSMasterRefNum: GB12323020392
+                      - sAndSMasterRefNum: GB12323020393
+              example-9:
+                value:
+                  direction: GB_TO_NI
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  trailerRegistrationNums:
+                    - KF293716
+                    - GH28372S
+                  plannedCrossing:
+                    routeId: '2'
+                    localDateTimeOfDeparture: 2024-04-02T10:58
+                  ukcDeclaration:
+                      fpoEORI: GB123456789012
+              example-10:
+                value:
+                  direction: GB_TO_NI
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  trailerRegistrationNums:
+                    - KF293716
+                    - GH28372S
+                  plannedCrossing:
+                    routeId: '178'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  ukimsEidrDeclarations:
+                    - traderEORI: XI286547329000
+                      nopWaiver: false
+                      localReferenceNumber: ABC123
+              example-11:
+                value:
+                  direction: GB_TO_NI
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  trailerRegistrationNums:
+                    - KF293716
+                    - GH28372S
+                  plannedCrossing:
+                    routeId: '178'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  ukimsEidrDeclarations:
+                    - traderEORI: XI123456789014
+                      nopWaiver: true
+        required: true
+      responses:
+        '202':
+          description: The goods movement record creation request has been accepted.  Use the Push Pull Notifications API to retrieve the GMR that will be created.
+          headers:
+            Notification-Message-Id:
+              description: The messageId that will be included in a notification message created in response to this request.  See above for more information about notifications.
+              example: 368ed1fc-a082-41cb-a8bd-ac04cc5bdc55
+              required: true
+              schema:
+                type: string
+            Notification-Box-Id:
+              description: The boxId to use when retrieving the notification created in response to this request.  See above for more information about notifications.
+              example: 3af01911-75ed-4412-a12d-ca80f626ab10
+              required: true
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              examples:
+                invalidJson:
+                  value:
+                    code: INVALID_JSON_FORMAT
+                jsonSchemaError:
+                  value:
+                    code: JSON_SCHEMA_ERROR
+                notYetSupported:
+                  value:
+                    code: NOT_YET_SUPPORTED
+                eoriNotSupported:
+                  value:
+                    code: EORI_NOT_SUPPORTED
+                invalidRoute:
+                  value:
+                    code: INVALID_ROUTE
+                    message: The Route ID you have entered is invalid or unavailable for this movement.
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+    get:
+      description:
+        <p>This endpoint provides a list of all the Goods Movement Records (GMRs) that you have worked on over the last 28 days.</p>
+
+        <p>The returned list of GMRs will contain summary information as per the example below.  For the full GMR, use the Get Goods Movement Record endpoint.</p>
+      operationId: List Goods Movement Records
+      parameters:
+        - name: Content-Type
+          in: header
+          description: Specifies the format of the request body, which must be JSON.
+          required: false
+          style: simple
+          schema:
+            type: string
+            example: application/json
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Authorization'
+      security:
+        - userRestricted:
+            - write:goods-movement-system
+      responses:
+        '200':
+          description: All GMRs from the last 28 days are listed in the response body
+          content:
+            application/json:
+              examples:
+                example-1:
+                  value:
+                    - gmrId: GMRA000000F8
+                      direction: UK_INBOUND
+                      vehicleRegNum: AB19 DEF
+                      isUnaccompanied: false
+                      state: NOT_FINALISABLE
+                      createdDateTime: '2020-06-11T09:48:21.592Z'
+                      updatedDateTime: '2020-06-14T13:12:03.237Z'
+                      plannedCrossing:
+                        routeId: '60'
+                      links:
+                        - href: "/customs/goods-movement-system/movements/GMRA000000F8"
+                          method: GET
+                          rel: get-goods-movement-record
+                    - gmrId: GMRB00000A9C
+                      direction: UK_OUTBOUND
+                      vehicleRegNum: GU51 ABC
+                      state: OPEN
+                      plannedCrossing:
+                        routeId: '63'
+                        localDateTimeOfDeparture: 2021-08-11T10:58
+                      createdDateTime: '2020-06-09T09:42:15.362Z'
+                      updatedDateTime: '2020-06-09T12:12:09.283Z'
+                      links:
+                        - href: "/customs/goods-movement-system/movements/GMRB00000A9C"
+                          method: GET
+                          rel: get-goods-movement-record
+                    - gmrId: GMRA0000028D
+                      direction: UK_INBOUND
+                      vehicleRegNum: KL58 FEM
+                      state: EMBARKED
+                      inspectionRequired: true
+                      reportToLocations:
+                        - inspectionTypeId: '1'
+                          locationIds:
+                            - L0029A
+                            - L0030A
+                            - L0031A
+                        - inspectionTypeId: '2'
+                          locationIds:
+                            - L0029A
+                            - L0031A
+                      plannedCrossing:
+                        routeId: '60'
+                      checkedInCrossing:
+                        routeId: '60'
+                        localDateTimeOfArrival: 2021-06-11T10:58
+                      actualCrossing:
+                        routeId: '60'
+                        localDateTimeOfArrival: 2021-06-11T11:03
+                      createdDateTime: '2020-06-08T08:42:11.901Z'
+                      updatedDateTime: '2020-06-08T15:23:55.471Z'
+                      links:
+                        - href: "/customs/goods-movement-system/movements/GMRA0000028D"
+                          method: GET
+                          rel: get-goods-movement-record
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - gmrId
+                    - direction
+                    - state
+                    - createdDateTime
+                    - updatedDateTime
+                  properties:
+                    gmrId:
+                      $ref: '#/components/schemas/gmrId'
+                    direction:
+                      $ref: '#/components/schemas/direction'
+                    isUnaccompanied:
+                      $ref: '#/components/schemas/isUnaccompanied'
+                    inspectionRequired:
+                      $ref: '#/components/schemas/inspectionRequired'
+                    reportToLocations:
+                      $ref: '#/components/schemas/reportToLocations'
+                    vehicleRegNum:
+                      $ref: '#/components/schemas/vehicleRegNum'
+                    trailerRegistrationNums:
+                      $ref: '#/components/schemas/trailerRegistrationNums'
+                    containerReferenceNums:
+                      $ref: '#/components/schemas/containerReferenceNums'
+                    state:
+                      $ref: '#/components/schemas/state'
+                    createdDateTime:
+                      $ref: '#/components/schemas/createdDateTime'
+                    updatedDateTime:
+                      $ref: '#/components/schemas/updatedDateTime'
+                    plannedCrossing:
+                      $ref: '#/components/schemas/plannedCrossing'
+                    checkedInCrossing:
+                      $ref: '#/components/schemas/checkedInCrossing'
+                    actualCrossing:
+                      $ref: '#/components/schemas/actualCrossing'
+                    links:
+                      type: array
+                      description: A list of endpoint links that indicate possible actions related to the current resource
+                      items:
+                        type: object
+                        description: An endpoint link that indicates a possible action related to the current resource
+                        required:
+                          - href
+                          - method
+                          - rel
+                        properties:
+                          href:
+                            type: string
+                            description: The relative URL of the endpoint
+                            example: "/customs/goods-movement-system/movements/GMRB00000A9C"
+                          method:
+                            type: string
+                            description: The HTTP method type for the endpoint
+                            oneOf:
+                              - title: GET
+                            example: GET
+                          rel:
+                            type: string
+                            description: A label for the endpoint, which describes how it is related to the current resource. The rel will be self where the action is retrieval of the same resource.
+                            oneOf:
+                              - title: get-goods-movement-record
+                            example: get-goods-movement-record
+                        example:
+                          rel: get-goods-movement-record
+                          href: "/customs/goods-movement-system/movements/GMRB00000A9C"
+                          method: GET
+        '400':
+          description: ''
+          content:
+            application/json:
+              examples:
+                invalidJson:
+                  value:
+                    code: INVALID_JSON_FORMAT
+                jsonSchemaError:
+                  value:
+                    code: JSON_SCHEMA_ERROR
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+  "/customs/goods-movement-system/movements/{gmrId}":
+    put:
+      description:
+        <p>This endpoint updates a Goods Movement Record (GMR)</p>
+
+        <p>When updating, you can provide the full record or you can provide incomplete information and update it again later.</p>
+
+        <p>If the GMR you POST is schematically invalid, you will receive details of the schematic errors in a 400 error response.</p>
+
+        <p>If the GMR you POST is schematically valid, the endpoint will respond with a 202 Accepted and you will receive a notification
+        after a few seconds detailing the status of the GMR.  This notification will confirm if the GMR is "open", i.e. ready to be checked-in
+        or "not finalisable".  In either case, updates with the PUT API can be made.</p>
+
+        <p>If it is "not finalisable" then the parts of the GMR that are invalid or missing will be identified in the notification.</p>
+
+        <p>The direction of a GMR cannot be updated.  If the direction is incorrect the GMR must be deleted and a new one created.</p>
+      operationId: Update Goods Movement Record
+      parameters:
+        - $ref: '#/components/parameters/GmrId'
+        - $ref: '#/components/parameters/Content-Type'
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Authorization'
+      security:
+        - userRestricted:
+            - write:goods-movement-system
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - direction
+              not:
+                anyOf:
+                  - required:
+                      - emptyVehicle
+                      - customsDeclarations
+                  - required:
+                      - emptyVehicle
+                      - transitDeclarations
+                  - required:
+                      - emptyVehicle
+                      - tirDeclarations
+                  - required:
+                      - emptyVehicle
+                      - ataDeclarations
+                  - required:
+                      - emptyVehicle
+                      - eidrDeclarations
+                  - required:
+                      - emptyVehicle
+                      - ukimsEidrDeclarations
+                  - required:
+                      - emptyVehicle
+                      - indirectExportDeclarations
+                  - required:
+                      - emptyVehicle
+                      - dbcDeclaration
+                  - required:
+                      - emptyVehicle
+                      - exemptionDeclaration
+                  - required:
+                      - emptyVehicle
+                      - ukcDeclaration
+              properties:
+                direction:
+                  $ref: '#/components/schemas/direction'
+                haulierType:
+                  $ref: '#/components/schemas/haulierType'
+                isUnaccompanied:
+                  $ref: '#/components/schemas/isUnaccompanied'
+                vehicleRegNum:
+                  $ref: '#/components/schemas/vehicleRegNum'
+                trailerRegistrationNums:
+                  $ref: '#/components/schemas/trailerRegistrationNums'
+                containerReferenceNums:
+                  $ref: '#/components/schemas/containerReferenceNums'
+                plannedCrossing:
+                  $ref: '#/components/schemas/plannedCrossing'
+                sAndSMasterRefNums:
+                  $ref: '#/components/schemas/sAndSMasterRefNums'
+                customsDeclarations:
+                  $ref: '#/components/schemas/customsDeclarations'
+                mtpDeclaration:
+                  $ref: '#/components/schemas/mtpDeclaration'
+                transitDeclarations:
+                  $ref: '#/components/schemas/transitDeclarations'
+                tirDeclarations:
+                  $ref: '#/components/schemas/tirDeclarations'
+                ataDeclarations:
+                  $ref: '#/components/schemas/ataDeclarations'
+                eidrDeclarations:
+                  $ref: '#/components/schemas/eidrDeclarations'
+                ukimsEidrDeclarations:
+                  $ref: '#/components/schemas/ukimsEidrDeclarations'
+                indirectExportDeclarations:
+                  $ref: '#/components/schemas/indirectExportDeclarations'
+                emptyVehicle:
+                  $ref: '#/components/schemas/emptyVehicle'
+                dbcDeclaration:
+                  $ref: '#/components/schemas/dbcDeclaration'
+                exemptionDeclaration:
+                  $ref: '#/components/schemas/exemptionDeclaration'
+                ukcDeclaration:
+                  $ref: '#/components/schemas/ukcDeclaration'
+              additionalProperties: false
+            examples:
+              example-1:
+                value:
+                  direction: UK_OUTBOUND
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  plannedCrossing:
+                    routeId: '63'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  customsDeclarations:
+                    - customsDeclarationId: 0GB689223596000-SE119404
+                    - customsDeclarationId: 0GB689223596000-SE119405
+                    - customsDeclarationId: 0GB689223596000-SE119406
+                      customsDeclarationPartId: 34J
+                  transitDeclarations:
+                    - transitDeclarationId: 10GB00002910B75BE5
+                      isTSAD: true
+                    - transitDeclarationId: 10GB00002910B75BE6
+                      sAndSMasterRefNum: 20GB01I0XLM976S004
+                      isTSAD: false
+              example-2:
+                value:
+                  direction: GB_TO_NI
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  trailerRegistrationNums:
+                    - KF293716
+                    - GH28372S
+                  plannedCrossing:
+                    routeId: '303'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  eidrDeclarations:
+                    - traderEORI: GB123456789012
+                      sAndSMasterRefNum: 20GB01I0XLM976S003
+              example-3:
+                value:
+                  direction: UK_OUTBOUND
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  plannedCrossing:
+                    routeId: '60'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  emptyVehicle:
+                    isOwnVehicle: false
+                    sAndSMasterRefNum: 20GB01I0XLM976S003
+              example-4:
+                value:
+                  direction: UK_OUTBOUND
+                  isUnaccompanied: true
+                  containerReferenceNums:
+                    - CSQU3054383
+                  plannedCrossing:
+                    routeId: '63'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  ataDeclarations:
+                    - ataCarnetId: SDOEFOK2982893
+              example-5:
+                value:
+                  direction: GB_TO_NI
+                  isUnaccompanied: true
+                  trailerRegistrationNums:
+                    - KF293716
+                    - GH28372S
+                  plannedCrossing:
+                    routeId: '303'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  sAndSMasterRefNums:
+                    - masterRefNum: 19GB4S24GC3PPFGVR7
+                    - masterRefNum: 19GB4S24GC3PPFGVR8
+                  tirDeclarations:
+                    - tirCarnetId: FEOKEOK092927
+              example-6:
+                value:
+                  direction: NI_TO_GB
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  plannedCrossing:
+                    routeId: '304'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  indirectExportDeclarations:
+                    - eadMasterRefNum: 20IE01I0XLM976S003
+                    - eadMasterRefNum: 20IE01I0XLM976S004
+              example-7:
+                value:
+                  direction: UK_OUTBOUND
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  trailerRegistrationNums:
+                    - KF293716
+                    - GH28372S
+                  plannedCrossing:
+                    routeId: '63'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  dbcDeclaration:
+                    isOwnVehicle: false
+                    dbcGoods:
+                      - sAndSMasterRefNum: GB12323020392
+                      - sAndSMasterRefNum: GB12323020393
+              example-8:
+                value:
+                  direction: UK_INBOUND
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  plannedCrossing:
+                    routeId: '60'
+                    localDateTimeOfDeparture: 2021-08-11T10:58
+                  mtpDeclaration:
+                    mtpGoods:
+                      - sAndSMasterRefNum: GB12323020392
+                      - sAndSMasterRefNum: GB12323020393
+              example-9:
+                value:
+                  direction: GB_TO_NI
+                  isUnaccompanied: false
+                  vehicleRegNum: AB19 DEF
+                  trailerRegistrationNums:
+                    - KF293716
+                    - GH28372S
+                  plannedCrossing:
+                    routeId: '2'
+                    localDateTimeOfDeparture: 2024-04-02T10:58
+                  ukcDeclaration:
+                      fpoEORI: GB123456789012
+        required: true
+      responses:
+        '202':
+          description: The goods movement record update request has been accepted.  Use the Push Pull Notifications API to retrieve the updated GMR.
+          headers:
+            Notification-Message-Id:
+              description: The messageId that will be included in a notification message created in response to this request.  See above for more information about notifications.
+              required: true
+              example: 368ed1fc-a082-41cb-a8bd-ac04cc5bdc55
+              schema:
+                type: string
+            Notification-Box-Id:
+              description: The boxId to use when retrieving the notification created in response to this request.  See above for more information about notifications.
+              example: 3af01911-75ed-4412-a12d-ca80f626ab10
+              required: true
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              examples:
+                invalidJson:
+                  value:
+                    code: INVALID_JSON_FORMAT
+                jsonSchemaError:
+                  value:
+                    code: JSON_SCHEMA_ERROR
+                wrongState:
+                  value:
+                    code: INVALID_GMR_STATE
+                notYetSupported:
+                  value:
+                    code: NOT_YET_SUPPORTED
+                cannotChangeDirection:
+                  value:
+                    code: DIRECTION_CHANGE_NOT_SUPPORTED
+                eoriNotSupported:
+                  value:
+                    code: EORI_NOT_SUPPORTED
+                invalidRoute:
+                  value:
+                    code: INVALID_ROUTE
+                    message: The Route ID you have entered is invalid or unavailable for this movement.
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '403':
+          description: ''
+          content:
+            application/json:
+              examples:
+                unmatchedRecipient:
+                  value:
+                    code: ''
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '404':
+          description: ''
+          content:
+            application/json:
+              examples:
+                unmatchedRecipient:
+                  value:
+                    code: GMR_NOT_FOUND
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+    get:
+      description:
+        <p>This endpoint gets a Goods Movement Record (GMR)</p>
+
+        <p>The returned GMR will reflect the latest record received with the given GMR ID, and will include a metadata object detailing the GMR's current status and any errors or issues.</p>
+      operationId: Get Goods Movement Record
+      parameters:
+        - $ref: '#/components/parameters/GmrId'
+        - name: Content-Type
+          in: header
+          description: Specifies the format of the request body, which must be JSON.
+          required: false
+          style: simple
+          schema:
+            type: string
+            example: application/json
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Authorization'
+      security:
+        - userRestricted:
+            - write:goods-movement-system
+      responses:
+        '200':
+          description: The Goods Movement Record was found and is provided in the response body
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - gmrId
+                  - direction
+                  - haulierEORI
+                  - metadata
+                not:
+                  anyOf:
+                    - required:
+                        - emptyVehicle
+                        - customsDeclarations
+                    - required:
+                        - emptyVehicle
+                        - transitDeclarations
+                    - required:
+                        - emptyVehicle
+                        - tirDeclarations
+                    - required:
+                        - emptyVehicle
+                        - ataDeclarations
+                    - required:
+                        - emptyVehicle
+                        - eidrDeclarations
+                    - required:
+                        - emptyVehicle
+                        - ukimsEidrDeclarations
+                    - required:
+                        - emptyVehicle
+                        - indirectExportDeclarations
+                    - required:
+                        - emptyVehicle
+                        - dbcDeclaration
+                    - required:
+                        - emptyVehicle
+                        - exemptionDeclaration
+                    - required:
+                        - emptyVehicle
+                        - ukcDeclaration
+                properties:
+                  gmrId:
+                    $ref: '#/components/schemas/gmrId'
+                  haulierEORI:
+                    $ref: '#/components/schemas/haulierEORI'
+                  metadata:
+                    $ref: '#/components/schemas/metadata'
+                  direction:
+                    $ref: '#/components/schemas/direction'
+                  haulierType:
+                    $ref: '#/components/schemas/haulierType'
+                  isUnaccompanied:
+                    $ref: '#/components/schemas/isUnaccompanied'
+                  vehicleRegNum:
+                    $ref: '#/components/schemas/vehicleRegNum'
+                  trailerRegistrationNums:
+                    $ref: '#/components/schemas/trailerRegistrationNums'
+                  containerReferenceNums:
+                    $ref: '#/components/schemas/containerReferenceNums'
+                  plannedCrossing:
+                    $ref: '#/components/schemas/plannedCrossing'
+                  checkedInCrossing:
+                    $ref: '#/components/schemas/checkedInCrossing'
+                  actualCrossing:
+                    $ref: '#/components/schemas/actualCrossing'
+                  sAndSMasterRefNums:
+                    $ref: '#/components/schemas/sAndSMasterRefNums'
+                  customsDeclarations:
+                    $ref: '#/components/schemas/customsDeclarations'
+                  mtpDeclaration:
+                    $ref: '#/components/schemas/mtpDeclaration'
+                  transitDeclarations:
+                    $ref: '#/components/schemas/transitDeclarations'
+                  tirDeclarations:
+                    $ref: '#/components/schemas/tirDeclarations'
+                  ataDeclarations:
+                    $ref: '#/components/schemas/ataDeclarations'
+                  eidrDeclarations:
+                    $ref: '#/components/schemas/eidrDeclarations'
+                  ukimsEidrDeclarations:
+                    $ref: '#/components/schemas/ukimsEidrDeclarations'
+                  indirectExportDeclarations:
+                    $ref: '#/components/schemas/indirectExportDeclarations'
+                  emptyVehicle:
+                    $ref: '#/components/schemas/emptyVehicle'
+                  dbcDeclaration:
+                    $ref: '#/components/schemas/dbcDeclaration'
+                  exemptionDeclaration:
+                    $ref: '#/components/schemas/exemptionDeclaration'
+                  ukcDeclaration:
+                    $ref: '#/components/schemas/ukcDeclaration'
+                  links:
+                    type: array
+                    description: A list of endpoint links that indicate possible actions related to the current resource
+                    items:
+                      type: object
+                      description: An endpoint link that indicates a possible action related to the current resource
+                      required:
+                        - href
+                        - method
+                        - rel
+                      properties:
+                        href:
+                          type: string
+                          description: The relative URL of the endpoint
+                          example: "/customs/goods-movement-system/movements/GMRB00000A9C"
+                        method:
+                          type: string
+                          description: The HTTP method type for the endpoint
+                          oneOf:
+                            - title: PUT
+                            - title: DELETE
+                          example: PUT
+                        rel:
+                          type: string
+                          description: A label for the endpoint, which describes how it is related to the current resource. The rel will be self where the action is retrieval of the same resource.
+                          oneOf:
+                            - title: update-goods-movement-record
+                              description: The rel for the PUT method
+                            - title: delete-goods-movement-record
+                              description: The rel for the DELETE method
+                          example: update-goods-movement-record
+                      example:
+                        rel: update-goods-movement-record
+                        href: "/customs/goods-movement-system/movements/GMRB00000A9C"
+                        method: PUT
+              examples:
+                example-1:
+                  value:
+                    gmrId: GMRB000000F8
+                    haulierEORI: GB123456789012
+                    metadata:
+                      state: NOT_FINALISABLE
+                      gmrStatusVersion: 2
+                      createdDateTime: '2021-08-11T10:58:12.384Z'
+                      updatedDateTime: '2021-08-12T16:39:03.198Z'
+                      ruleFailures:
+                        - code: '013_2'
+                          technicalMessage: Safety and security MRN not found
+                          field: "$.customsDeclarations[3].sAndSMasterRefNum"
+                          value: 20GB01I0XLM976S003
+                        - code: '024_4'
+                          technicalMessage: Transit declaration not found
+                          field: "$.transitDeclarations[1].transitDeclarationId"
+                          value: 10GB00002910B75BE6
+                    direction: UK_OUTBOUND
+                    isUnaccompanied: false
+                    vehicleRegNum: AB19 DEF
+                    trailerRegistrationNums:
+                      - KF293716
+                      - GH28372S
+                    plannedCrossing:
+                      routeId: '63'
+                      localDateTimeOfDeparture: 2021-08-11T10:58
+                    customsDeclarations:
+                      - customsDeclarationId: 0GB689223596000-SE119404
+                        sAndSMasterRefNum: 20GB01I0XLM976S001
+                      - customsDeclarationId: 0GB689223596000-SE119405
+                        sAndSMasterRefNum: 20GB01I0XLM976S002
+                      - customsDeclarationId: 0GB689223596000-SE119406
+                        sAndSMasterRefNum: 20GB01I0XLM976S003
+                    transitDeclarations:
+                      - transitDeclarationId: 10GB00002910B75BE5
+                        isTSAD: true
+                      - transitDeclarationId: 10GB00002910B75BE6
+                        sAndSMasterRefNum: 20GB01I0XLM976S004
+                        isTSAD: false
+                    links:
+                      - href: "/customs/goods-movement-system/movements/GMRB000000F8"
+                        method: PUT
+                        rel: update-goods-movement-record
+                      - href: "/customs/goods-movement-system/movements/GMRA000000F8"
+                        method: DELETE
+                        rel: delete-goods-movement-record
+                example-2:
+                  value:
+                    gmrId: GMRA00000RM2
+                    haulierEORI: GB123456789012
+                    metadata:
+                      state: EMBARKED
+                      gmrStatusVersion: 6
+                      reportToLocations:
+                        - inspectionTypeId: '1'
+                          locationIds:
+                            - L0029A
+                            - L0030A
+                            - L0031A
+                        - inspectionTypeId: '2'
+                          locationIds:
+                            - L0029A
+                            - L0031A
+                      inspectionRequired: true
+                      createdDateTime: '2021-08-11T10:58:12.384Z'
+                      updatedDateTime: '2021-08-12T16:39:03.198Z'
+                    direction: UK_INBOUND
+                    isUnaccompanied: false
+                    vehicleRegNum: AB19 DEF
+                    trailerRegistrationNums:
+                      - KF293716
+                      - GH28372S
+                    plannedCrossing:
+                      routeId: '60'
+                      localDateTimeOfDeparture: 2021-08-11T10:58
+                    eidrDeclarations:
+                      - traderEORI: GB123456789012
+                        sAndSMasterRefNum: 20FR01I0XLM976S003
+                example-3:
+                  value:
+                    gmrId: GMRD00000RM2
+                    haulierEORI: GB123456789012
+                    metadata:
+                      state: EMBARKED
+                      gmrStatusVersion: 6
+                      inspectionRequired: true
+                      createdDateTime: '2021-08-11T10:58:12.384Z'
+                      updatedDateTime: '2021-08-12T16:39:03.198Z'
+                    direction: NI_TO_GB
+                    isUnaccompanied: false
+                    vehicleRegNum: AB19 DEF
+                    trailerRegistrationNums:
+                      - KF293716
+                      - GH28372S
+                    plannedCrossing:
+                      routeId: '304'
+                      localDateTimeOfDeparture: 2021-08-11T10:58
+                    indirectExportDeclarations:
+                      - eadMasterRefNum: 20IE01I0XLM976S003
+                      - eadMasterRefNum: 20IE01I0XLM976S004
+        '400':
+          description: ''
+          content:
+            application/json:
+              examples:
+                invalidJson:
+                  value:
+                    code: INVALID_JSON_FORMAT
+                jsonSchemaError:
+                  value:
+                    code: JSON_SCHEMA_ERROR
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '403':
+          description: ''
+          content:
+            application/json:
+              examples:
+                unmatchedRecipient:
+                  value:
+                    code: ''
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '404':
+          description: ''
+          content:
+            application/json:
+              examples:
+                unmatchedRecipient:
+                  value:
+                    code: GMR_NOT_FOUND
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+    delete:
+      description:
+        <p>This endpoint deletes a Goods Movement Record (GMR)</p>
+
+        <p>Use this to delete a GMR for movements which have not yet been checked in.  This will make any declaration IDs previously added to the GMR available for use in another GMR.</p>
+      operationId: Delete Goods Movement Record
+      parameters:
+        - $ref: '#/components/parameters/GmrId'
+        - name: Content-Type
+          in: header
+          description: Specifies the format of the request body, which must be JSON.
+          required: false
+          style: simple
+          schema:
+            type: string
+            example: application/json
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Authorization'
+      security:
+        - userRestricted:
+            - write:goods-movement-system
+      responses:
+        '202':
+          description: The goods movement record delete request has been accepted.  Use the Push Pull Notifications API to retrieve confirmation of the deleted GMR.  After receiving this confirmation you will be able to use declaration IDs previously added to the deleted GMR in a new GMR.
+          headers:
+            Notification-Message-Id:
+              description: The messageId that will be included in a notification message created in response to this request.  See above for more information about notifications.
+              required: true
+              example: 368ed1fc-a082-41cb-a8bd-ac04cc5bdc55
+              schema:
+                type: string
+            Notification-Box-Id:
+              description: The boxId to use when retrieving the notification created in response to this request.  See above for more information about notifications.
+              required: true
+              example: 3af01911-75ed-4412-a12d-ca80f626ab10
+              schema:
+                type: string
+        '400':
+          description: ''
+          content:
+            application/json:
+              examples:
+                wrongState:
+                  value:
+                    code: INVALID_GMR_STATE
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '403':
+          description: ''
+          content:
+            application/json:
+              examples:
+                unmatchedRecipient:
+                  value:
+                    code: ''
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '404':
+          description: ''
+          content:
+            application/json:
+              examples:
+                unmatchedRecipient:
+                  value:
+                    code: GMR_NOT_FOUND
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+    parameters:
+      - name: gmrId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of a Goods Movement Record (GMR)
+  "/customs/goods-movement-system/reference-data":
+    get:
+      description: "\nThis endpoint gets details of all reference data used by GVMS.\n\nReference data includes lists of:\n\n* Carriers operating on GVMS routes\n* Ports operating GVMS routes \n* GVMS routes (combining a carrier and a pair of ports)\n* Validation rule failure codes and descriptions\n\nThe reference data is returned as a single JSON document containing all\nrequired data lists.\n\nNew carriers, routes, ports and locations will be added with effective from\nand to dates, so your software will have an advance view of upcoming \nchanges.  It should not offer up routes that are not yet in effect or \nthat have expired.\n\nGVMS reference data is updated periodically. If you are a GVMS API subscriber, you will receive notifications about upcoming updates. If you receive a notification about an update, your application software must refresh the reference data by calling the GET reference-data endpoint.\n"
+      operationId: Get reference data
+      parameters:
+        - name: Accept
+          in: header
+          description: Specifies the response format and the [version](/api-documentation/docs/reference-guide#versioning) of the API to be used.
+          schema:
+            type: string
+            example: application/vnd.hmrc.1.0+json
+          required: true
+          style: simple
+      security:
+        - {}
+      responses:
+        '200':
+          description: GMVS reference data is returned in the response body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  routes:
+                    description: The routes covered by GVMS
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        routeId:
+                          description: The route identifier
+                          type: string
+                        routeDirection:
+                          description: The direction of the route
+                          type: string
+                          enum:
+                            - UK_INBOUND
+                            - UK_OUTBOUND
+                            - GB_TO_NI
+                            - NI_TO_GB
+                        routeEffectiveFrom:
+                          description: Date the route came into effect
+                          type: string
+                          format: date
+                        departurePortId:
+                          description: The id of the departure port
+                          type: integer
+                        arrivalPortId:
+                          description: The id of the arrival port
+                          type: integer
+                        carrierId:
+                          description: the id of the carrier operating that route
+                          type: integer
+                        routeEffectiveTo:
+                          description: The date the route stopped being used
+                          type: string
+                          format: date
+                      required:
+                        - routeId
+                        - routeDirection
+                        - routeEffectiveFrom
+                        - departurePortId
+                        - arrivalPortId
+                        - carrierId
+                  ports:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        portId:
+                          description: The id of the port
+                          type: integer
+                        portRegion:
+                          description: The region the port is grouped into for CTC
+                          type: string
+                        portEffectiveFrom:
+                          description: The date the port came into effect
+                          type: string
+                          format: date
+                        portDescription:
+                          description: 'Description of the port eg: the ports name'
+                          type: string
+                          minLength: 3
+                          maxLength: 255
+                        timezoneId:
+                          description: The UTC Identifier
+                          type: string
+                          maxLength: 50
+                        chiefPortCode:
+                          description: The port code specific to CHIEF
+                          type: string
+                        cdsPortCode:
+                          description: The port code specific to CDS
+                          type: string
+                        officeOfTransitCustomsOfficeCode:
+                          description: Customs office code for CTC
+                          type: string
+                          minLength: 8
+                          maxLength: 8
+                        portEffectiveTo:
+                          description: The date the port stopped being used
+                          type: string
+                          format: date
+                        portCountryCode:
+                          description: The Country code of the associated Port
+                          type: string
+                          pattern: "^[A-Z]{2}$"
+                        isOperatingArrivedExportsProcess:
+                          description: If true, indicates that this port is operating the arrived exports process and as such requires all customs export declarations to be pre-arrived prior to check-in.  If omitted or false, indicates that this port is operating the standard exports process.
+                          type: boolean
+                      required:
+                        - portId
+                        - portEffectiveFrom
+                        - portDescription
+                        - officeOfTransitCustomsOfficeCode
+                        - portCountryCode
+                  carriers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        carrierId:
+                          description: The id of the carrier
+                          type: integer
+                        carrierName:
+                          description: The name of the carrier
+                          type: string
+                          minLength: 1
+                          maxLength: 255
+                        countryCode:
+                          description: The country code where the carrier is registered
+                          type: string
+                          pattern: ^[A-Z]{2}$
+                      required:
+                        - carrierId
+                        - carrierName
+                  locations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        locationId:
+                          description: The id of the inspection facility.
+                          type: string
+                        locationDescription:
+                          description: The name of the inspection facility location.
+                          type: string
+                        address:
+                          description: The address where the inspection facility is located.
+                          type: object
+                          properties:
+                            lines:
+                              description: The building name or number, and street name where the inspection facility is located.
+                              type: array
+                              minItems: 1
+                              maxItems: 4
+                              items:
+                                type: string
+                            town:
+                              description: The town where the inspection facility is located.
+                              type: string
+                            postcode:
+                              description: The postcode where the inspection facility is located.
+                              type: string
+                          required:
+                            - lines
+                            - postcode
+                        locationType:
+                          description: The type of inspection facility; either Inland Border Facility (IBF), Border Control Post (BCP) or a facility that carries out all inspection types (ALL).
+                          type: string
+                          enum:
+                            - IBF
+                            - BCP
+                            - ALL
+                        supportedDirections:
+                          description: The directions of travel supported by the location.
+                          type: array
+                          minItems: 1
+                          maxItems: 4
+                          items:
+                            type: string
+                            enum:
+                              - UK_INBOUND
+                              - UK_OUTBOUND
+                              - GB_TO_NI
+                              - NI_TO_GB
+                        locationEffectiveFrom:
+                          description: The date the inspection facility location starts being used.
+                          type: string
+                          format: date
+                        locationEffectiveTo:
+                          description: The date the inspection facility location stops being used.
+                          type: string
+                          format: date
+                        supportedInspectionTypeIds:
+                          description: The list of inspectionTypeIds for the types of inspections
+                            carried out.
+                          type: array
+                          minItems: 1
+                          items:
+                            type: string
+                        requiredInspectionLocations:
+                          description: The list of portIds that the inspection facility supports.
+                          type: array
+                          minItems: 1
+                          items:
+                            type: integer
+                      required:
+                        - locationId
+                        - locationDescription
+                        - address
+                        - locationType
+                        - locationEffectiveFrom
+                        - supportedDirections
+                        - supportedInspectionTypeIds
+                        - requiredInspectionLocations
+                  inspectionTypes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        inspectionTypeId:
+                          description: The id of the type of inspection that needs to be performed on the vehicle.
+                          type: string
+                        description:
+                          description: The category of the type of inspection that needs to be performed on the vehicle e.g. CUSTOMS, DEFRA or TRANSIT.
+                          type: string
+                      required:
+                        - inspectionTypeId
+                        - description
+                  ruleFailures:
+                    description: The list of business and other possible rule failures within a GMR
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ruleId:
+                          type: string
+                        ruleDescription:
+                          type: string
+                      required:
+                        - ruleId
+                        - ruleDescription
+              example:
+                example-1:
+                  value:
+                    routes:
+                      - routeId: '80'
+                        routeEffectiveFrom: '2020-12-01'
+                        departurePortId: 1765
+                        routeDirection: UK_OUTBOUND
+                        arrivalPortId: 2183
+                        carrierId: 1
+                      - routeId: '103'
+                        routeEffectiveFrom: '2020-12-01'
+                        departurePortId: 7054
+                        routeDirection: UK_OUTBOUND
+                        arrivalPortId: 1401
+                        carrierId: 2
+                    ports:
+                      - portId: 1777
+                        portRegion: Northeast
+                        portEffectiveFrom: '2000-01-01'
+                        portDescription: Newcastle-Upon-Tyne
+                        chiefPortCode: TYN
+                        cdsPortCode: NCLLAOCSE
+                        officeOfTransitCustomsOfficeCode: GB000218
+                        timezoneId: Europe/London
+                        portCountryCode: GB
+                      - portId: 1824
+                        portRegion: South
+                        portEffectiveFrom: '2000-01-01'
+                        portDescription: Newhaven
+                        chiefPortCode: NHV
+                        cdsPortCode: NHVNHVNHV
+                        officeOfTransitCustomsOfficeCode: GB003250
+                        timezoneId: Europe/London
+                        portCountryCode: GB
+                    carriers:
+                      - carrierId: 1
+                        carrierName: Stena Line
+                        countryCode: SE
+                      - carrierId: 2
+                        carrierName: DFDS Seaways
+                        countryCode: DK
+                    ruleFailures:
+                      - ruleId: '001_1'
+                        ruleDescription: This type of declaration cannot be used for this direction of travel
+                      - ruleId: '001_3'
+                        ruleDescription: This type of declaration cannot be used in this GMR based on the Haulier type you selected. Check and try again.
+
+components:
+  parameters:
+    GmrId:
+      name: gmrId
+      in: path
+      description: The ID of a Goods Movement Record (GMR)
+      required: true
+      style: simple
+      schema:
+        type: string
+        example: GMRI00000A45
+    Content-Type:
+      name: Content-Type
+      in: header
+      description: Specifies the format of the request body, which must be JSON.
+      required: true
+      style: simple
+      schema:
+        type: string
+        example: application/json
+    Accept:
+      name: Accept
+      in: header
+      description: Specifies the response format and the [version](/api-documentation/docs/reference-guide#versioning) of the API to be used.
+      schema:
+       type: string
+       example: application/vnd.hmrc.1.0+json
+      required: true
+      style: simple
+    Authorization:
+      name: Authorization
+      in: header
+      description: An OAuth 2.0 Bearer Token.
+      schema:
+        type: string
+        example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
+      required: true
+      style: simple
+  schemas:
+    errorResponse:
+      title: errorResponse
+      required:
+        - code
+      type: object
+      properties:
+        code:
+          type: string
+    gmrId:
+      type: string
+      description: The Goods Movement Record (GMR) ID for this GMR.  Do not include when POSTing a GMR - GVMS will assign an ID.
+      example: 'GMRA000002JR'
+      pattern: ^GMR[A-Z][0-9A-Z]{8}$
+    state:
+      type: string
+      description: The state of the GMR
+      example: 'NOT_FINALISABLE'
+      oneOf:
+        - title: NOT_FINALISABLE
+          description: The GMR is in a non-finalisable state.  This means an update will be required from the haulier prior to check-in.
+        - title: OPEN
+          description: The GMR is open for updates and is ready for check-in.
+        - title: CHECKED_IN
+          description: The GMR is checked-in, awaiting embarkation confirmation from the carrier.
+        - title: EMBARKED
+          description: The GMR is embarked, meaning the goods movement has embarked on its crossing but the goods are awaiting clearance to proceed.
+        - title: COMPLETED
+          description: The GMR is completed, meaning the goods movement has embarked on its crossing and the goods are clear to proceed.
+    gmrStatusVersion:
+      type: integer
+      description: The version number of the latest status notification for this GMR.  Each new notification for a given GMR will have a greater gmrStatusVersion than the last.
+      example: 4
+    inspectionRequired:
+      type: boolean
+      description: If set to true, indicates that the vehicle requires a customs inspection. If set to false, indicates that the vehicle does not require a customs inspection. If not set, indicates the customs inspection decision has not yet been made or is not applicable.  For outbound GMRs, this indicates that the vehicle must present at an inspection facility prior to checking-in at the port. For Office of Transit inspections for inbound GMRs, a decision may be made to inspect subsequent to a notification that inspection is not required. In this event a notification will be sent that changes inspectionRequired from false to true. If this happens after leaving the port of arrival, the inspection should be carried out at the next transit office e.g. the office of destination.
+    createdDateTime:
+      type: string
+      description: The date and time that this GMR was created.
+      example: '2021-08-11T10:58:12.333Z'
+      pattern: ^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d{3}Z$
+    updatedDateTime:
+      type: string
+      description: The date and time that this GMR was last updated.
+      example: '2021-08-11T10:58:12.333Z'
+      pattern: ^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d{3}Z$
+    ruleFailures:
+      type: array
+      description: If the GMR is not finalisable, the reasons why are listed here. These must be rectified in subsequent calls to the PUT API prior to check-in.
+      items:
+        type: object
+        title: The Items Schema
+        required:
+          - code
+          - technicalMessage
+        properties:
+          code:
+            type: string
+            description: A code indicating the ID of the rule that failed
+            example: '007'
+          technicalMessage:
+            type: string
+            description: A message describing the rule that failed
+            example: 'Safety and Security MRN not found'
+          field:
+            type: string
+            description: A JSONPath pointing to the field that this rule failure concerns. Only included if the rule concerns a specific field e.g. a specific MRN.
+            example: '$.customsDeclarations[2].sAndSMasterRefNum'
+          value:
+            type: string
+            description: The value of the JSON field that this rule failure concerns. Only included if the rule concerns a specific field e.g. a specific MRN.
+            example: 'GB1343113534'
+    metadata:
+      type: object
+      description: Information from the Goods Vehicle Movement Service about this GMR.
+      required:
+        - state
+        - gmrStatusVersion
+        - createdDateTime
+        - updatedDateTime
+      properties:
+        state:
+          $ref: '#/components/schemas/state'
+        gmrStatusVersion:
+          $ref: '#/components/schemas/gmrStatusVersion'
+        inspectionRequired:
+          $ref: '#/components/schemas/inspectionRequired'
+        reportToLocations:
+          $ref: '#/components/schemas/reportToLocations'
+        createdDateTime:
+          $ref: '#/components/schemas/createdDateTime'
+        updatedDateTime:
+          $ref: '#/components/schemas/updatedDateTime'
+        ruleFailures:
+          $ref: '#/components/schemas/ruleFailures'
+    haulierEORI:
+      type: string
+      description: The EORI of the haulier that is responsible for the vehicle making the goods movement
+      example: 'GB123456789012'
+      pattern: '^GB[0-9]{12,15}$'
+    isUnaccompanied:
+      type: boolean
+      description: Set to true if the vehicle will not be accompanying the trailer(s) during the crossing, or if the vehicle is carrying a container that will be detached and loaded for the crossing.
+      example: false
+    isOwnVehicle:
+      type: boolean
+      description: Set to false if the haulier is moving the goods vehicle under a contract of carriage. Set to true if there is no contract of carriage.
+      example: false
+    isTSAD:
+      type: boolean
+      description: Set to true if the transit declaration is a TSAD, otherwise set to false (for a TAD)
+      example: false
+    direction:
+      type: string
+      example: 'UK_OUTBOUND'
+      description: The direction of the movement - into or out of the UK, or between Great Britain and Northern Ireland
+      oneOf:
+        - title: UK_INBOUND
+          description: The movement is travelling into the UK
+        - title: UK_OUTBOUND
+          description: The movement is travelling out of the UK
+        - title: GB_TO_NI
+          description: The movement is travelling out of Great Britain into Northern Ireland
+        - title: NI_TO_GB
+          description: The movement is travelling out of Northern Ireland into Great Britain
+    vehicleRegNum:
+      type: string
+      description: Vehicle registration number of the vehicle that will arrive at port. If isUnaccompanied is set to false then vehicleRegNum must be provided to check-in.
+      example: 'AB19 DEF'
+      pattern: ^[A-Z0-9-](?:[A-Z0-9 -]{1,30})?$
+    trailerRegistrationNums:
+      type: array
+      description: For vehicles carrying trailers, the trailer registration number of each trailer. If isUnaccompanied is set to true then trailerRegistrationNums or containerReferenceNums must be provided before check-in.
+      minItems: 1
+      maxItems: 2
+      uniqueItems: true
+      pattern: ^[A-Z0-9-](?:[A-Z0-9 -]{1,199})?$
+      items:
+        type: string
+        example: 'A1234567'
+    containerReferenceNums:
+      type: array
+      description: For vehicles arriving with containers that will be detached and loaded, the container reference number of each container in the movement. If isUnaccompanied is set to true then trailerRegistrationNums or containerReferenceNums must be provided before check-in.
+      minItems: 1
+      uniqueItems: true
+      pattern: ^[A-Z0-9-](?:[A-Z0-9 -]{1,199})?$
+      items:
+        type: string
+        example: 'CSQU3054383'
+    plannedCrossing:
+      type: object
+      description: Details of the planned crossing.
+      required:
+        - routeId
+      properties:
+        routeId:
+          $ref: '#/components/schemas/routeId'
+        localDateTimeOfDeparture:
+          $ref: '#/components/schemas/localDateTimeOfDeparture'
+      additionalProperties: false
+    checkedInCrossing:
+      type: object
+      description: Details of the crossing that the vehicle has been checked-in to. These details will only be present in the Goods Movement Record after the vehicle has checked in.
+      required:
+        - routeId
+        - localDateTimeOfArrival
+      properties:
+        routeId:
+          $ref: '#/components/schemas/routeId'
+        localDateTimeOfArrival:
+          $ref: '#/components/schemas/localDateTimeOfArrival'
+      additionalProperties: false
+    actualCrossing:
+      type: object
+      description: Details of the crossing that the goods movement has been embarked on. These details will only be present in the Goods Movement Record after the vehicle has embarked on a crossing.
+      required:
+        - routeId
+        - localDateTimeOfArrival
+      properties:
+        routeId:
+          $ref: '#/components/schemas/routeId'
+        localDateTimeOfArrival:
+          $ref: '#/components/schemas/localDateTimeOfArrival'
+      additionalProperties: false
+    reportToLocations:
+      type: array
+      description: A list of one or more inspection types, from GVMS Reference Data, that the vehicle must have carried out, in the order specified. This means that where there are multiple entries here, the vehicle must report for the first inspection type listed before each subsequent listed inspection. Each entry includes a list of available locations for the inspection type.
+      minItems: 1
+      items:
+        type: object
+        description: Information about an inspection that is required
+        example:
+          inspectionTypeId: '1'
+          locationIds:
+            - L0029A
+            - L0030A
+        required:
+          - inspectionTypeId
+          - locationIds
+        properties:
+          inspectionTypeId:
+            type: string
+            description: An inspectionTypeId from GVMS Reference Data denoting the type of inspection that needs to be performed on the vehicle.
+            pattern: ^[0-9A-Za-z\-_]{1,100}$
+            example: '7'
+          locationIds:
+            type: array
+            pattern: ^[0-9A-Za-z\-_]{1,100}$
+            description: A list of locationIds from GVMS Reference Data that are available to perform this type of inspection.
+            items:
+              type: string
+              example: 'L0030A'
+    routeId:
+      type: string
+      description: The ID of the crossing route, using a routeId from the GVMS reference
+        data
+      example: '2'
+      pattern: ^[A-Z0-9-]{1,200}$
+    localDateTimeOfDeparture:
+      type: string
+      description: The planned date and time of departure, in local time of the departure port. Must not include seconds, time zone or UTC marker
+      example: '2021-08-11T10:58'
+      pattern: ^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d$
+    localDateTimeOfArrival:
+      type: string
+      description: The planned date and time of arrival, in local time of the arrival port. Must not include seconds, time zone or UTC marker
+      example: '2021-08-11T10:58'
+      pattern: ^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d$
+    haulierType:
+      type: string
+      description: The type of haulier moving the goods
+      example: 'STANDARD'
+      oneOf:
+      - title: STANDARD
+        description: All hauliers that are not one of the other types
+      - title: FPO_ASN
+        description: Fast parcel operators that are members of the Anti-Smuggling Network
+      - title: FPO_OTHER
+        description: Fast parcel operators that are not members of the ASN and are not moving goods with a Memorandum of Understanding
+      - title: NATO_MOD
+        description: NATO or MoD
+      - title: RMG
+        description: Royal Mail Group
+      - title: ETOE
+        description: Extra-Territorial Office of Exchange
+    eidrDeclarations:
+      type: array
+      description: Details of one or more EIDR declarations.  Must be provided prior to check-in for EIDR movements.  For movements using a specially-issued EORI, the same EORI may be entered multiple times, one entry for each ENS S&S MRN travelling under EIDR.
+      items:
+        type: object
+        required:
+          - traderEORI
+        properties:
+          traderEORI:
+            type: string
+            description: The trader's EORI, GB EORIs are valid for all direction movements, and XI EORIs are valid for only GB to NI movements.
+            example: 'GB123456789012'
+            pattern: ^[A-Z]{2}[0-9]{12,15}$
+          localReferenceNumber:
+            $ref: '#/components/schemas/localReferenceNumber'
+          procedureCode:
+            $ref: '#/components/schemas/procedureCode'
+          sAndSMasterRefNum:
+            type: string
+            example: 'GB12323020392'
+            pattern: ^[A-Z0-9-)(/]{1,200}$
+            description: The master reference number or Movement Reference Number (MRN) for a Safety & Security declaration, where applicable. This must be supplied when the S&S declaration covers individual EIDR consignments within a trailer.  This applies to both ENS and EXS declarations.  If there is one, include the S&S MRN for the EIDR declaration above here.  ENS will accept both the format of ICS2 and ICSNI MRNs in GB_TO_NI direction.
+        additionalProperties: false
+      minItems: 1
+    ukimsEidrDeclarations:
+      type: array
+      description: Details of one or more EIDR declarations for UKIMS registered traders.  Must be provided prior to check-in for EIDR movements.  For movements using a specially-issued EORI, the same EORI may be entered multiple times, one entry for each ENS S&S MRN travelling under EIDR.
+      items:
+        type: object
+        required:
+          - traderEORI
+        properties:
+          traderEORI:
+            type: string
+            description: The trader's EORI, only XI EORIs are valid.
+            example: 'XI123456789012'
+            pattern: ^[A-Z]{2}[0-9]{12,15}$
+          nopWaiver:
+            type: boolean
+            description: Indicates whether or not NOP waiver applies.  If it does not, include Local Reference Number.
+          localReferenceNumber:
+            $ref: '#/components/schemas/localReferenceNumber'
+          sAndSMasterRefNum:
+            type: string
+            example: 'GB12323020392'
+            pattern: ^[A-Z0-9-)(/]{1,200}$
+            description: The master reference number or Movement Reference Number (MRN) for a Safety & Security declaration, where applicable. This must be supplied when the S&S declaration covers individual UKIMS EIDR consignments within a trailer.  This applies to both ENS and EXS declarations.  If there is one, include the S&S MRN for the UKIMS EIDR declaration above here.
+        additionalProperties: false
+      minItems: 1
+    tirDeclarations:
+      type: array
+      description: Details of one or more TIR Carnet declarations. Must be provided prior to check-in for TIR movements.
+      items:
+        type: object
+        required:
+          - tirCarnetId
+        properties:
+          tirCarnetId:
+            $ref: '#/components/schemas/tirCarnetId'
+          sAndSMasterRefNum:
+            type: string
+            example: 'GB12323020392'
+            pattern: ^[A-Z0-9-)(/]{1,200}$
+            description: The master reference number or Movement Reference Number (MRN) for a Safety & Security declaration, where applicable. This must be supplied when the S&S declaration covers TIR Carnet consignments within a trailer. This applies to both ENS and EXS declarations.  If there is one, include the S&S MRN for the TIR declaration above here.  ENS will accept both the format of ICS2 and ICSNI MRNs in GB_TO_NI direction.
+        additionalProperties: false
+      minItems: 1
+    ataDeclarations:
+      type: array
+      description: Details of one or more ATA Carnet declarations. Must be provided prior to check-in for ATA movements.
+      items:
+        type: object
+        required:
+          - ataCarnetId
+        properties:
+          ataCarnetId:
+            $ref: '#/components/schemas/ataCarnetId'
+          sAndSMasterRefNum:
+            type: string
+            example: 'GB12323020392'
+            pattern: ^[A-Z0-9-)(/]{1,200}$
+            description: The master reference number or Movement Reference Number (MRN) for a Safety & Security declaration, where applicable. This must be supplied when the S&S declaration covers ATA Carnet consignments within a trailer. This applies to both ENS and EXS declarations.  If there is one, include the S&S MRN for the ATA declaration above here.  ENS will accept both the format of ICS2 and ICSNI MRNs in GB_TO_NI direction.
+        additionalProperties: false
+      minItems: 1
+    localReferenceNumber:
+      type: string
+      description: The trader's local reference number.
+      example: 'AB123456789'
+      pattern: ^[A-Z0-9]{1,22}$
+    procedureCode:
+      type: string
+      description: A pre-defined HMRC code that is used to determine how the shipment will be processed and how the duties and taxes, if applicable, will be collected.
+      example: AB12
+      pattern: ^[0-9]{4}$
+    emptyVehicle:
+      type: object
+      description: Declares that this is an empty movement and contains details about the empty movement. Must be provided prior to check-in for empty movements.
+      required:
+        - isOwnVehicle
+      properties:
+        isOwnVehicle:
+          $ref: '#/components/schemas/isOwnVehicle'
+        sAndSMasterRefNum:
+          type: string
+          example: 'GB12323020392'
+          pattern: ^[A-Z0-9-)(/]{1,200}$
+          description: The master reference number or Movement Reference Number (MRN) for a Safety & Security declaration, where applicable. This must be supplied when the S&S declaration covers a trailer that is moving under a contract of carriage. This applies to both ENS and EXS declarations.
+      additionalProperties: false
+    dbcDeclaration:
+      type: object
+      description: Declares goods moving under Declaration by Conduct. Refer to the Oral and By Conduct List published at gov.uk for details.
+      required:
+        - isOwnVehicle
+      properties:
+        isOwnVehicle:
+          $ref: '#/components/schemas/isOwnVehicle'
+        dbcGoods:
+          $ref: '#/components/schemas/dbcGoods'
+      additionalProperties: false
+    dbcGoods:
+      type: array
+      description: References for a Declaration by Conduct goods load.
+      items:
+        type: object
+        required:
+          - sAndSMasterRefNum
+        properties:
+          sAndSMasterRefNum:
+            type: string
+            example: 'GB12323020392'
+            pattern: ^[A-Z0-9-)(/]{1,200}$
+            description: The master reference number or Movement Reference Number (MRN) for a Safety & Security declaration, where applicable. This may be required when the S&S declaration covers a DBC that is moving under a contract of carriage. This applies to both ENS and EXS declarations.
+        additionalProperties: false
+      minItems: 1
+    customsDeclarations:
+      type: array
+      description: Details of the customs declarations within this goods load.
+      items:
+        type: object
+        required:
+          - customsDeclarationId
+        properties:
+          customsDeclarationId:
+            $ref: '#/components/schemas/customsDeclarationId'
+          customsDeclarationPartId:
+            $ref: '#/components/schemas/customsDeclarationPartId'
+          sAndSMasterRefNum:
+            type: string
+            example: 'GB12323020392'
+            pattern: ^[A-Z0-9-)(/]{1,200}$
+            description: The master reference number or Movement Reference Number (MRN) for a Safety & Security declaration, where applicable. This must be supplied when the S&S declaration covers individual consignments within a trailer. This applies to both ENS and EXS declarations.  If there is one, include the S&S MRN for the customs declaration above here.  ENS will accept both the format of ICS2 and ICSNI MRNs in GB_TO_NI direction
+        additionalProperties: false
+      minItems: 1
+    transitDeclarations:
+      type: array
+      description: Details of the transit declarations within this goods load.
+      items:
+        type: object
+        required:
+          - transitDeclarationId
+          - isTSAD
+        properties:
+          transitDeclarationId:
+            $ref: '#/components/schemas/transitDeclarationId'
+          isTSAD:
+            $ref: '#/components/schemas/isTSAD'
+          sAndSMasterRefNum:
+            type: string
+            example: 'GB12323020392'
+            pattern: ^[A-Z0-9-)(/]{1,200}$
+            description: The master reference number or Movement Reference Number (MRN) for a Safety & Security declaration, where applicable. This must be supplied when the S&S declaration covers individual Transit consignments within a trailer. This applies to both ENS and EXS declarations.  If there is one, include the S&S MRN for the Transit declaration above here.  ENS will accept both the format of ICS2 and ICSNI MRNs in GB_TO_NI direction
+        additionalProperties: false
+      minItems: 1
+    mtpDeclaration:
+      type: object
+      description: Details of a stamped, paper-based declaration using a Manual Transit Procedure (MTP). Only intended for use when technical issues prevent use of Transit IT systems.
+      properties:
+        mtpGoods:
+          $ref: '#/components/schemas/mtpGoods'
+      additionalProperties: false
+    mtpGoods:
+      type: array
+      description: References for goods loads moving under a stamped paper MTP.
+      items:
+        type: object
+        required:
+          - sAndSMasterRefNum
+        properties:
+          sAndSMasterRefNum:
+            type: string
+            example: 'GB12323020392'
+            pattern: ^[A-Z0-9-)(/]{1,200}$
+            description: The master reference number or Movement Reference Number (MRN) for a Safety & Security declaration, where applicable. This must be supplied when the S&S declaration covers individual Transit consignments within a trailer. This applies to both ENS and EXS declarations.  If there is one, include the S&S MRN for the MTP declaration above here.  ENS will accept both the format of ICS2 and ICSNI MRNs in GB_TO_NI direction
+        additionalProperties: false
+      minItems: 1
+    indirectExportDeclarations:
+      type: array
+      description: Details of the indirect export declarations within this goods load. Only valid for NI to GB movements where the goods originated from outside UK.
+      items:
+        type: object
+        required:
+          - eadMasterRefNum
+        properties:
+          eadMasterRefNum:
+            $ref: '#/components/schemas/eadMasterRefNum'
+        additionalProperties: false
+      minItems: 1
+    exemptionDeclaration:
+      type: object
+      description: Declares Royal Mail Group or ETOE goods in the movement that do not require a customs declaration.
+      properties:
+        exemptedGoods:
+          $ref: '#/components/schemas/exemptedGoods'
+      additionalProperties: false
+    exemptedGoods:
+      type: array
+      description: The list of goods loads exempted from customs.  Used for GB>NI RMG <£900 B2B or GB>EU FPO+MOU goods loads.
+      items:
+        type: object
+        properties:
+          sAndSMasterRefNum:
+            type: string
+            description: The MRN or DUCR (depending on direction) for an ENS or EXS Safety & Security declaration for this goods load.  ENS will accept both the format of ICS2 and ICSNI MRNs in GB_TO_NI direction
+            example: 'GB12323020392'
+            pattern: ^[A-Z0-9-)(/]{1,200}$
+        additionalProperties: false
+        required:
+          - sAndSMasterRefNum
+      minItems: 1
+    ukcDeclaration:
+      type: object
+      description: UK-Carrier (UK-C) Declaration.
+      required:
+          - fpoEORI
+      properties:
+        fpoEORI:
+          type: string
+          description: GB or XI EORI for UK-C
+          example: 'GB123456789012'
+          pattern: ^(GB|XI)[0-9]{12,15}$
+      additionalProperties: false
+    customsDeclarationId:
+      type: string
+      description: This is the identifier for a customs declaration from Customs Declaration Service (CDS) or CHIEF. For inbound movements declared in CDS it is a MRN, for example 19GB4S24GC3PPFGVR7. For inbound movements declared in CHIEF it is an ERN, for example 999123456C20210615. For outbound movements declared in either CDS or CHIEF it is a DUCR, for example 0GB689223596000-SE119404.
+      example: '19GB4S24GC3PPFGVR7'
+      pattern: ^[A-Z0-9-)(/]{1,200}$
+    customsDeclarationPartId:
+      type: string
+      description: Supported in Production environment after 5 September 2021. If a DUCR from CHIEF has been added in customsDeclarationId, this is the optional part ID. Must match the part ID for the declaration entered in CHIEF including any leading zeroes.
+      example: '205J'
+      pattern: ^[0-9]{1,3}[A-Z]?$
+    tirCarnetId:
+      type: string
+      description: The TIR Carnet ID for the carnet within a TIR goods movement
+      example: 'ABC/123'
+      pattern: ^.{1,200}$
+    ataCarnetId:
+      type: string
+      description: The ATA Carnet ID for the carnet within an ATA goods movement
+      example: 'ABC/123'
+      pattern: ^.{1,200}$
+    sAndSMasterRefNums:
+      $ref: 'schemas/gmr-types-schema.json#/definitions/sAndSMasterRefNums'
+    transitDeclarationId:
+      type: string
+      description: This is the Transit MRN issued by the Office of Departure. Must be provided.
+      example: '18AT320000TVWJYM68'
+      pattern: ^\d{2}[A-Z]{2}[A-Z0-9]{14}$
+    eadMasterRefNum:
+      type: string
+      description: The master or movement reference number (MRN) of the Export Accompanying Document (EAD) for this indirect export.
+      example: '19IE294000AFGRIG29'
+      pattern: ^\d{2}(?!GB|XI)[A-Z]{2}[A-Z0-9]{14}$
+  securitySchemes:
+    userRestricted:
+      type: oauth2
+      description: |
+        HMRC supports OAuth 2.0 for authenticating user restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
+        See https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints for details.
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
+          scopes:
+            write:goods-movement-system: Goods Vehicle Movements Haulier API - Read and Write

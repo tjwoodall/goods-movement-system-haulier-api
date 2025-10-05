@@ -4,7 +4,7 @@ info:
   version: '1.0'
   description: API for creating and amending Goods Movement Records (GMRs) in the Goods Vehicle Movement Service
 servers:
-  - url: https://api.service.hmrc.gov.uk/
+  - url: https://api.service.hmrc.gov.uk
     variables: {}
 paths:
   /customs/goods-movement-system/movements:

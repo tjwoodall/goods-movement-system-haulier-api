@@ -526,14 +526,12 @@
       "minItems": 1
     },
     "sAndSMasterRefNums": {
-      "$id": "#/definitions/sAndSMasterRefNums",
       "type": "array",
       "description": "The master reference numbers or Movement Reference Numbers (MRNs) for Safety & Security declarations - should be supplied where applicable.",
       "minItems": 1,
       "maxItems": 2500,
       "uniqueItems": true,
       "items": {
-        "$id": "#/definitions/sAndSMasterRefNums/items",
         "type": "object",
         "required": [
           "masterRefNum"
@@ -672,12 +670,9 @@
       "pattern": "^.{1,200}$"
     },
     "sAndSMasterRefNum": {
-      "$id": "#/definitions/sAndSMasterRefNum",
       "type": "string",
       "description": "The master reference number (MRN) for a Safety & Security declaration, where applicable.",
-      "examples": [
-        "GB12323020392"
-      ],
+      "example": "GB12323020392",
       "pattern": "^[A-Z0-9-)(/]{1,200}$"
     },
     "transitDeclarationId": {

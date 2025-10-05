@@ -4,12 +4,12 @@ info:
   version: '1.0'
   description: API for creating and amending Goods Movement Records (GMRs) in the Goods Vehicle Movement Service
 servers:
-  - url: https://api.service.hmrc.gov.uk/
+  - url: https://api.service.hmrc.gov.uk
     variables: {}
 paths:
   "/customs/goods-movement-system/movements":
     post:
-      description:
+      summary:
         <p>This endpoint is used to create a Goods Movement Record (GMR)</p>
 
         <p>When creating, you can provide the full record or you can provide incomplete information and update it later using the Update GMR endpoint.</p>
@@ -23,7 +23,7 @@ paths:
         or "not finalisable", i.e. an update to the GMR is required.</p>
 
         <p>If it is "not finalisable" then the parts of the GMR that are invalid or missing will be identified in the notification.</p>
-      operationId: Create Goods Movement Record
+      operationId: CreateGoodsMovementRecord
       parameters:
         - $ref: '#/components/parameters/Content-Type'
         - $ref: '#/components/parameters/Accept'
@@ -305,11 +305,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/errorResponse'
     get:
-      description:
+      summary:
         <p>This endpoint provides a list of all the Goods Movement Records (GMRs) that you have worked on over the last 28 days.</p>
 
         <p>The returned list of GMRs will contain summary information as per the example below.  For the full GMR, use the Get Goods Movement Record endpoint.</p>
-      operationId: List Goods Movement Records
+      operationId: ListGoodsMovementRecords
       parameters:
         - name: Content-Type
           in: header
@@ -472,7 +472,7 @@ paths:
                 $ref: '#/components/schemas/errorResponse'
   "/customs/goods-movement-system/movements/{gmrId}":
     put:
-      description:
+      summary:
         <p>This endpoint updates a Goods Movement Record (GMR)</p>
 
         <p>When updating, you can provide the full record or you can provide incomplete information and update it again later.</p>
@@ -486,7 +486,7 @@ paths:
         <p>If it is "not finalisable" then the parts of the GMR that are invalid or missing will be identified in the notification.</p>
 
         <p>The direction of a GMR cannot be updated.  If the direction is incorrect the GMR must be deleted and a new one created.</p>
-      operationId: Update Goods Movement Record
+      operationId: UpdateGoodsMovementRecord
       parameters:
         - $ref: '#/components/parameters/GmrId'
         - $ref: '#/components/parameters/Content-Type'
@@ -742,7 +742,6 @@ paths:
                 invalidRoute:
                   value:
                     code: INVALID_ROUTE
-                    message: The Route ID you have entered is invalid or unavailable for this movement.
               schema:
                 $ref: '#/components/schemas/errorResponse'
         '403':
@@ -766,11 +765,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/errorResponse'
     get:
-      description:
+      summary:
         <p>This endpoint gets a Goods Movement Record (GMR)</p>
 
         <p>The returned GMR will reflect the latest record received with the given GMR ID, and will include a metadata object detailing the GMR's current status and any errors or issues.</p>
-      operationId: Get Goods Movement Record
+      operationId: GetGoodsMovementRecord
       parameters:
         - $ref: '#/components/parameters/GmrId'
         - name: Content-Type
@@ -1052,11 +1051,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/errorResponse'
     delete:
-      description:
+      summary:
         <p>This endpoint deletes a Goods Movement Record (GMR)</p>
 
         <p>Use this to delete a GMR for movements which have not yet been checked in.  This will make any declaration IDs previously added to the GMR available for use in another GMR.</p>
-      operationId: Delete Goods Movement Record
+      operationId: DeleteGoodsMovementRecord
       parameters:
         - $ref: '#/components/parameters/GmrId'
         - name: Content-Type
@@ -1127,8 +1126,8 @@ paths:
         description: The ID of a Goods Movement Record (GMR)
   "/customs/goods-movement-system/reference-data":
     get:
-      description: "\nThis endpoint gets details of all reference data used by GVMS.\n\nReference data includes lists of:\n\n* Carriers operating on GVMS routes\n* Ports operating GVMS routes \n* GVMS routes (combining a carrier and a pair of ports)\n* Validation rule failure codes and descriptions\n\nThe reference data is returned as a single JSON document containing all\nrequired data lists.\n\nNew carriers, routes, ports and locations will be added with effective from\nand to dates, so your software will have an advance view of upcoming \nchanges.  It should not offer up routes that are not yet in effect or \nthat have expired.\n\nGVMS reference data is updated periodically. If you are a GVMS API subscriber, you will receive notifications about upcoming updates. If you receive a notification about an update, your application software must refresh the reference data by calling the GET reference-data endpoint.\n"
-      operationId: Get reference data
+      summary: "\nThis endpoint gets details of all reference data used by GVMS.\n\nReference data includes lists of:\n\n* Carriers operating on GVMS routes\n* Ports operating GVMS routes \n* GVMS routes (combining a carrier and a pair of ports)\n* Validation rule failure codes and descriptions\n\nThe reference data is returned as a single JSON document containing all\nrequired data lists.\n\nNew carriers, routes, ports and locations will be added with effective from\nand to dates, so your software will have an advance view of upcoming \nchanges.  It should not offer up routes that are not yet in effect or \nthat have expired.\n\nGVMS reference data is updated periodically. If you are a GVMS API subscriber, you will receive notifications about upcoming updates. If you receive a notification about an update, your application software must refresh the reference data by calling the GET reference-data endpoint.\n"
+      operationId: Getreferencedata
       parameters:
         - name: Accept
           in: header
@@ -1368,7 +1367,7 @@ paths:
                       required:
                         - ruleId
                         - ruleDescription
-              example:
+              examples:
                 example-1:
                   value:
                     routes:

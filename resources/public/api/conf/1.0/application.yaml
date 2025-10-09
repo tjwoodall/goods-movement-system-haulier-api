@@ -29,7 +29,7 @@ paths:
         - $ref: '#/components/parameters/Accept'
         - $ref: '#/components/parameters/Authorization'
       security:
-        - userRestricted:
+        - User-Restricted:
           - write:goods-movement-system
       requestBody:
         content:
@@ -321,7 +321,7 @@ paths:
         - $ref: '#/components/parameters/Accept'
         - $ref: '#/components/parameters/Authorization'
       security:
-        - userRestricted:
+        - User-Restricted:
             - write:goods-movement-system
       responses:
         '200':
@@ -492,7 +492,7 @@ paths:
         - $ref: '#/components/parameters/Accept'
         - $ref: '#/components/parameters/Authorization'
       security:
-        - userRestricted:
+        - User-Restricted:
             - write:goods-movement-system
       requestBody:
         content:
@@ -782,7 +782,7 @@ paths:
         - $ref: '#/components/parameters/Accept'
         - $ref: '#/components/parameters/Authorization'
       security:
-        - userRestricted:
+        - User-Restricted:
             - write:goods-movement-system
       responses:
         '200':
@@ -1068,7 +1068,7 @@ paths:
         - $ref: '#/components/parameters/Accept'
         - $ref: '#/components/parameters/Authorization'
       security:
-        - userRestricted:
+        - User-Restricted:
             - write:goods-movement-system
       responses:
         '202':
@@ -1970,7 +1970,7 @@ components:
       example: '19IE294000AFGRIG29'
       pattern: ^\d{2}(?!GB|XI)[A-Z]{2}[A-Z0-9]{14}$
   securitySchemes:
-    userRestricted:
+    User-Restricted:
       type: oauth2
       description: |
         HMRC supports OAuth 2.0 for authenticating user restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.

@@ -301,7 +301,6 @@ paths:
                 invalidRoute:
                   value:
                     code: INVALID_ROUTE
-                    message: The Route ID you have entered is invalid or unavailable for this movement.
               schema:
                 $ref: '#/components/schemas/errorResponse'
     get:

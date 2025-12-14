@@ -244,7 +244,7 @@ paths:
         This endpoint provides a list of all the Goods Movement Records (GMRs) that you have worked on over the last 28 days.
 
         The returned list of GMRs will contain summary information as per the example below. For the full GMR, use the Get Goods Movement Record endpoint.
-      operationId: List Goods Movement Records
+      operationId: ListGoodsMovementRecords
       responses:
         '200':
           description: |
@@ -347,7 +347,7 @@ paths:
         If it is "not finalisable" then the parts of the GMR that are invalid or missing will be identified in the notification.
 
         The direction of a GMR cannot be updated. If the direction is incorrect the GMR must be deleted and a new one created.
-      operationId: Update Goods Movement Record
+      operationId: UpdateGoodsMovementRecord
       requestBody:
         content:
           application/json:
@@ -577,7 +577,7 @@ paths:
         This endpoint gets a Goods Movement Record (GMR)
 
         The returned GMR will reflect the latest record received with the given GMR ID, and will include a metadata object detailing the GMR's current status and any errors or issues.
-      operationId: Get Goods Movement Record
+      operationId: GetGoodsMovementRecord
       responses:
         '200':
           description: The Goods Movement Record was found and is provided in the response body
@@ -727,7 +727,7 @@ paths:
         - $ref: '#/components/parameters/gmrId'
       description: |
         Use this to delete a GMR for movements which have not yet been checked in. This will make any declaration IDs previously added to the GMR available for use in another GMR.This endpoint gets a Goods Movement Record (GMR)
-      operationId: Delete a Goods Movement Record
+      operationId: DeleteaGoodsMovementRecord
       responses:
         '202':
           description: |
@@ -783,7 +783,7 @@ paths:
         New carriers, routes, ports and locations will be added with effective from and to dates, so your software will have an advance view of upcoming changes.  It should not offer up routes that are not yet in effect or that have expired.
 
         GVMS reference data is updated periodically. If you are a GVMS API subscriber, you will receive notifications about upcoming updates. If you receive a notification about an update, your application software must refresh the reference data by calling the GET reference-data endpoint.
-      operationId: Get reference data
+      operationId: Getreferencedata
       parameters:
         - name: Accept
           in: header

@@ -1184,7 +1184,8 @@ components:
             items:
               type: string
               pattern: ^[0-9A-Za-z\-_]{1,100}$
-            example: L0029A
+            example: 
+              - L0029A
     vehicleRegNum:
       type: string
       description: Vehicle registration number of the vehicle that will arrive at port.  If isUnaccompanied is set to false then vehicleRegNum must be provided to check-in.
@@ -1237,12 +1238,12 @@ components:
     createdDateTime:
       type: string
       description: The date and time that this GMR was created.
-      example: '2021-08-11T10:58:12'
+      example: '2021-08-11T10:58:12.000Z'
       pattern: ^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d{3}Z$
     updatedDateTime:
       type: string
       description: The date and time that this GMR was last updated.
-      example: '2021-08-12T15:34:02'
+      example: '2021-08-12T15:34:02.000Z'
       pattern: ^\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d.\d{3}Z$
     routeId:
       type: string
@@ -1789,8 +1790,7 @@ components:
     gmrStatusVersion:
       type: integer
       description: The version number of the latest status notification for this GMR.  Each new notification for a given GMR will have a greater gmrStatusVersion than the last.
-      example:
-        - 4
+      example: 4
     ruleFailures:
       type: array
       description: If the GMR is not finalisable, the reasons why are listed here.  These must be rectified in subsequent calls to the PUT API prior to check-in.

@@ -773,6 +773,7 @@ paths:
                 $ref: '#/components/schemas/error-response_definitions'
   /customs/goods-movement-system/reference-data:
     get:
+      summary: Get all reference data
       description: |
         This endpoint gets details of all reference data used by GVMS.
 

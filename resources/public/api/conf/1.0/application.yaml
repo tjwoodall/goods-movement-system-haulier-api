@@ -1243,7 +1243,7 @@ components:
     routeId:
       type: string
       description: The ID of the crossing route, using a routeId from the GVMS reference data
-      default: ''
+      default: '1'
       example: '18273'
       pattern: ^[A-Z0-9-]{1,200}$
     localDateTimeOfDeparture:

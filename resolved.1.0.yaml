@@ -679,23 +679,12 @@ paths:
                         pattern: "^[A-Z0-9-)(/]{1,200}$"
                         type: string
                         description: |-
-                          This is the identifier for a customs declaration from Customs Declaration Service (CDS) or CHIEF.
+                          This is the identifier for a customs declaration from Customs Declaration Service (CDS).
 
                           For inbound movements declared in CDS it is a MRN, for example 19GB4S24GC3PPFGVR7.
 
-                          For inbound movements declared in CHIEF it is an ERN, for example 999123456C20210615.
-
-                          For outbound movements declared in either CDS or CHIEF it is a DUCR, for example 0GB689223596000-SE119404.
+                          For outbound movements declared in CDS it is a DUCR, for example 0GB689223596000-SE119404.
                         example: 19GB4S24GC3PPFGVR7
-                      customsDeclarationPartId:
-                        pattern: "^[0-9]{1,3}[A-Z]?$"
-                        type: string
-                        description: "Supported in Production environment after 5\
-                          \ September 2021.  If a DUCR from CHIEF has been added in\
-                          \ customsDeclarationId, this is the optional part ID.  Must\
-                          \ match the part ID for the declaration entered in CHIEF\
-                          \ including any leading zeroes."
-                        example: 205J
                       sAndSMasterRefNum:
                         pattern: "^[A-Z0-9-)(/]{1,200}$"
                         type: string
@@ -1045,8 +1034,6 @@ paths:
                     routeId: "63"
                     localDateTimeOfDeparture: 2021-08-11T10:58
                   customsDeclarations:
-                  - customsDeclarationId: 0AB689275038503-XY119403
-                    customsDeclarationPartId: 123A
                   - customsDeclarationId: 0AB689275038503-XY119404
               create_with_eidr_declarations:
                 value:
@@ -1737,23 +1724,12 @@ paths:
                           pattern: "^[A-Z0-9-)(/]{1,200}$"
                           type: string
                           description: |-
-                            This is the identifier for a customs declaration from Customs Declaration Service (CDS) or CHIEF.
+                            This is the identifier for a customs declaration from Customs Declaration Service (CDS).
 
                             For inbound movements declared in CDS it is a MRN, for example 19GB4S24GC3PPFGVR7.
 
-                            For inbound movements declared in CHIEF it is an ERN, for example 999123456C20210615.
-
-                            For outbound movements declared in either CDS or CHIEF it is a DUCR, for example 0GB689223596000-SE119404.
+                            For outbound movements declared in CDS it is a DUCR, for example 0GB689223596000-SE119404.
                           example: 19GB4S24GC3PPFGVR7
-                        customsDeclarationPartId:
-                          pattern: "^[0-9]{1,3}[A-Z]?$"
-                          type: string
-                          description: "Supported in Production environment after\
-                            \ 5 September 2021.  If a DUCR from CHIEF has been added\
-                            \ in customsDeclarationId, this is the optional part ID.\
-                            \  Must match the part ID for the declaration entered\
-                            \ in CHIEF including any leading zeroes."
-                          example: 205J
                         sAndSMasterRefNum:
                           pattern: "^[A-Z0-9-)(/]{1,200}$"
                           type: string
@@ -2553,23 +2529,12 @@ paths:
                         pattern: "^[A-Z0-9-)(/]{1,200}$"
                         type: string
                         description: |-
-                          This is the identifier for a customs declaration from Customs Declaration Service (CDS) or CHIEF.
+                          This is the identifier for a customs declaration from Customs Declaration Service (CDS).
 
                           For inbound movements declared in CDS it is a MRN, for example 19GB4S24GC3PPFGVR7.
 
-                          For inbound movements declared in CHIEF it is an ERN, for example 999123456C20210615.
-
-                          For outbound movements declared in either CDS or CHIEF it is a DUCR, for example 0GB689223596000-SE119404.
+                          For outbound movements declared in CDS it is a DUCR, for example 0GB689223596000-SE119404.
                         example: 19GB4S24GC3PPFGVR7
-                      customsDeclarationPartId:
-                        pattern: "^[0-9]{1,3}[A-Z]?$"
-                        type: string
-                        description: "Supported in Production environment after 5\
-                          \ September 2021.  If a DUCR from CHIEF has been added in\
-                          \ customsDeclarationId, this is the optional part ID.  Must\
-                          \ match the part ID for the declaration entered in CHIEF\
-                          \ including any leading zeroes."
-                        example: 205J
                       sAndSMasterRefNum:
                         pattern: "^[A-Z0-9-)(/]{1,200}$"
                         type: string
@@ -2919,8 +2884,6 @@ paths:
                     routeId: "63"
                     localDateTimeOfDeparture: 2021-08-11T10:58
                   customsDeclarations:
-                  - customsDeclarationId: 0AB689275038503-XY119403
-                    customsDeclarationPartId: 123A
                   - customsDeclarationId: 0AB689275038503-XY119404
               update_with_eidr_declarations:
                 value:
@@ -4231,22 +4194,12 @@ components:
       pattern: "^[A-Z0-9-)(/]{1,200}$"
       type: string
       description: |-
-        This is the identifier for a customs declaration from Customs Declaration Service (CDS) or CHIEF.
+        This is the identifier for a customs declaration from Customs Declaration Service (CDS).
 
         For inbound movements declared in CDS it is a MRN, for example 19GB4S24GC3PPFGVR7.
 
-        For inbound movements declared in CHIEF it is an ERN, for example 999123456C20210615.
-
-        For outbound movements declared in either CDS or CHIEF it is a DUCR, for example 0GB689223596000-SE119404.
+        For outbound movements declared in CDS it is a DUCR, for example 0GB689223596000-SE119404.
       example: 19GB4S24GC3PPFGVR7
-    customsDeclarationPartId:
-      pattern: "^[0-9]{1,3}[A-Z]?$"
-      type: string
-      description: "Supported in Production environment after 5 September 2021.  If\
-        \ a DUCR from CHIEF has been added in customsDeclarationId, this is the optional\
-        \ part ID.  Must match the part ID for the declaration entered in CHIEF including\
-        \ any leading zeroes."
-      example: 205J
     customsDeclarations:
       minItems: 1
       type: array
@@ -4260,22 +4213,12 @@ components:
             pattern: "^[A-Z0-9-)(/]{1,200}$"
             type: string
             description: |-
-              This is the identifier for a customs declaration from Customs Declaration Service (CDS) or CHIEF.
+              This is the identifier for a customs declaration from Customs Declaration Service (CDS).
 
               For inbound movements declared in CDS it is a MRN, for example 19GB4S24GC3PPFGVR7.
 
-              For inbound movements declared in CHIEF it is an ERN, for example 999123456C20210615.
-
-              For outbound movements declared in either CDS or CHIEF it is a DUCR, for example 0GB689223596000-SE119404.
+              For outbound movements declared in CDS it is a DUCR, for example 0GB689223596000-SE119404.
             example: 19GB4S24GC3PPFGVR7
-          customsDeclarationPartId:
-            pattern: "^[0-9]{1,3}[A-Z]?$"
-            type: string
-            description: "Supported in Production environment after 5 September 2021.\
-              \  If a DUCR from CHIEF has been added in customsDeclarationId, this\
-              \ is the optional part ID.  Must match the part ID for the declaration\
-              \ entered in CHIEF including any leading zeroes."
-            example: 205J
           sAndSMasterRefNum:
             pattern: "^[A-Z0-9-)(/]{1,200}$"
             type: string
@@ -4889,22 +4832,12 @@ components:
                 pattern: "^[A-Z0-9-)(/]{1,200}$"
                 type: string
                 description: |-
-                  This is the identifier for a customs declaration from Customs Declaration Service (CDS) or CHIEF.
+                  This is the identifier for a customs declaration from Customs Declaration Service (CDS).
 
                   For inbound movements declared in CDS it is a MRN, for example 19GB4S24GC3PPFGVR7.
 
-                  For inbound movements declared in CHIEF it is an ERN, for example 999123456C20210615.
-
-                  For outbound movements declared in either CDS or CHIEF it is a DUCR, for example 0GB689223596000-SE119404.
+                  For outbound movements declared in CDS it is a DUCR, for example 0GB689223596000-SE119404.
                 example: 19GB4S24GC3PPFGVR7
-              customsDeclarationPartId:
-                pattern: "^[0-9]{1,3}[A-Z]?$"
-                type: string
-                description: "Supported in Production environment after 5 September\
-                  \ 2021.  If a DUCR from CHIEF has been added in customsDeclarationId,\
-                  \ this is the optional part ID.  Must match the part ID for the\
-                  \ declaration entered in CHIEF including any leading zeroes."
-                example: 205J
               sAndSMasterRefNum:
                 pattern: "^[A-Z0-9-)(/]{1,200}$"
                 type: string
@@ -5804,22 +5737,12 @@ components:
                 pattern: "^[A-Z0-9-)(/]{1,200}$"
                 type: string
                 description: |-
-                  This is the identifier for a customs declaration from Customs Declaration Service (CDS) or CHIEF.
+                  This is the identifier for a customs declaration from Customs Declaration Service (CDS).
 
                   For inbound movements declared in CDS it is a MRN, for example 19GB4S24GC3PPFGVR7.
 
-                  For inbound movements declared in CHIEF it is an ERN, for example 999123456C20210615.
-
-                  For outbound movements declared in either CDS or CHIEF it is a DUCR, for example 0GB689223596000-SE119404.
+                  For outbound movements declared in CDS it is a DUCR, for example 0GB689223596000-SE119404.
                 example: 19GB4S24GC3PPFGVR7
-              customsDeclarationPartId:
-                pattern: "^[0-9]{1,3}[A-Z]?$"
-                type: string
-                description: "Supported in Production environment after 5 September\
-                  \ 2021.  If a DUCR from CHIEF has been added in customsDeclarationId,\
-                  \ this is the optional part ID.  Must match the part ID for the\
-                  \ declaration entered in CHIEF including any leading zeroes."
-                example: 205J
               sAndSMasterRefNum:
                 pattern: "^[A-Z0-9-)(/]{1,200}$"
                 type: string

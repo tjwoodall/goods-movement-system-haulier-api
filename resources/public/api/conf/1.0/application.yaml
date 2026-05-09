@@ -6,6 +6,8 @@ info:
 servers:
   - url: https://api.service.hmrc.gov.uk
     variables: {}
+  - url: https://test-api.service.hmrc.gov.uk
+    variables: {}
 paths:
   /customs/goods-movement-system/movements:
     post:

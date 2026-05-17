@@ -1556,10 +1556,9 @@ components:
           - traderEORI
         properties:
           traderEORI:
-            type: string
-            description: The trader's EORI, GB EORIs are valid for all direction movements, and XI EORIs are valid for only GB to NI movements.
-            example: GB123456789012
-            pattern: ^[A-Z]{2}[0-9]{12,15}$
+            description: The trader's EORI, GB EORIs are valid for all direction movements, XI and EU EORIs are valid for only GB to NI movements.
+            allOf:
+              - $ref: 'common/schemas/properties.json#/definitions/eidrDeclarations/items/properties/traderEORI'
           sAndSMasterRefNum:
             allOf:
               - $ref: '#/components/schemas/sAndSMasterRefNum'
@@ -1579,10 +1578,9 @@ components:
           - traderEORI
         properties:
           traderEORI:
-            type: string
-            description: The trader's EORI, only XI EORIs are valid
-            example: XI123456789012
-            pattern: ^[A-Z]{2}[0-9]{12,15}$
+            description: The trader's EORI, only XI EORIs are valid.
+            allOf:
+              - $ref: 'common/schemas/properties.json#/definitions/ukimsEidrDeclarations/items/properties/traderEORI'
           nopWaiver:
             type: boolean
           localReferenceNumber:
@@ -1672,11 +1670,6 @@ components:
         exemptedGoods:
           $ref: '#/components/schemas/exemptedGoods'
       additionalProperties: false
-    fpoEORI:
-      type: string
-      description: GB or XI EORI for UK-C
-      example: GB123456789012
-      pattern: ^(GB|XI)[0-9]{12,15}$
     ukcDeclaration:
       type: object
       description: Details of UK-C declaration.
@@ -1684,7 +1677,9 @@ components:
         - fpoEORI
       properties:
         fpoEORI:
-          $ref: '#/components/schemas/fpoEORI'
+          description: GB or XI EORI for UK-C
+          allOf:
+            - $ref: 'common/schemas/properties.json#/definitions/ukcDeclaration/properties/fpoEORI'
       additionalProperties: false
     post-gmr-schema_definitions:
       title: goodsMovementRecord

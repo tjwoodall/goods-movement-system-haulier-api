@@ -277,11 +277,7 @@
           "traderEORI": {
             "type": "string",
             "description": "The trader's EORI, GB EORIs are valid for all direction movements, XI and EU EORIs are valid for only GB to NI movements.",
-            "examples": [
-              "GB123456789012",
-              "XI123456789897",
-              "FR12345678901234"
-            ],
+            "example": "GB123456789012",
             "pattern": "^(?:(?:GB|XI)[0-9]{12,15}|(?!GB|XI)[A-Z]{2}[0-9A-Z]{1,15})$"
           },
           "sAndSMasterRefNum": {
@@ -308,9 +304,7 @@
           "traderEORI": {
             "type": "string",
             "description": "The trader's EORI, only XI EORIs are valid",
-            "examples": [
-              "XI123456789012"
-            ],
+            "example": "XI123456789012",
             "pattern": "^[A-Z]{2}[0-9]{12,15}$"
           },
           "nopWaiver": { "type": "boolean" },
@@ -379,10 +373,7 @@
         "fpoEORI": {
           "type": "string",
           "description": "GB or XI EORI for UK-C",
-          "examples": [
-            "GB123456789012",
-            "XI123456789012"
-          ],
+          "example": "GB123456789012",
           "pattern": "^[A-Z]{2}[0-9]{12,15}$"
         }
       },

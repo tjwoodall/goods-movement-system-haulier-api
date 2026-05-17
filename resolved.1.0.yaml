@@ -843,12 +843,11 @@ paths:
                     type: object
                     properties:
                       traderEORI:
-                        pattern: "^[A-Z]{2}[0-9]{12,15}$"
+                        pattern: "^(?:(?:GB|XI)[0-9]{12,15}|(?!GB|XI)[A-Z]{2}[0-9A-Z]{1,15})$"
                         type: string
                         description: "The trader's EORI, GB EORIs are valid for all\
-                          \ direction movements, and XI EORIs are valid for only GB\
-                          \ to NI movements."
-                        example: GB123456789012
+                          \ direction movements, XI and EU EORIs are valid for only\
+                          \ GB to NI movements."
                       sAndSMasterRefNum:
                         pattern: "^[A-Z0-9-)(/]{1,200}$"
                         type: string
@@ -885,8 +884,7 @@ paths:
                       traderEORI:
                         pattern: "^[A-Z]{2}[0-9]{12,15}$"
                         type: string
-                        description: "The trader's EORI, only XI EORIs are valid"
-                        example: XI123456789012
+                        description: "The trader's EORI, only XI EORIs are valid."
                       nopWaiver:
                         type: boolean
                       localReferenceNumber:
@@ -1013,10 +1011,9 @@ paths:
                   type: object
                   properties:
                     fpoEORI:
-                      pattern: "^(GB|XI)[0-9]{12,15}$"
+                      pattern: "^[A-Z]{2}[0-9]{12,15}$"
                       type: string
                       description: GB or XI EORI for UK-C
-                      example: GB123456789012
                   additionalProperties: false
                   description: Details of UK-C declaration.
               additionalProperties: false
@@ -1888,12 +1885,11 @@ paths:
                       type: object
                       properties:
                         traderEORI:
-                          pattern: "^[A-Z]{2}[0-9]{12,15}$"
+                          pattern: "^(?:(?:GB|XI)[0-9]{12,15}|(?!GB|XI)[A-Z]{2}[0-9A-Z]{1,15})$"
                           type: string
                           description: "The trader's EORI, GB EORIs are valid for\
-                            \ all direction movements, and XI EORIs are valid for\
+                            \ all direction movements, XI and EU EORIs are valid for\
                             \ only GB to NI movements."
-                          example: GB123456789012
                         sAndSMasterRefNum:
                           pattern: "^[A-Z0-9-)(/]{1,200}$"
                           type: string
@@ -1930,8 +1926,7 @@ paths:
                         traderEORI:
                           pattern: "^[A-Z]{2}[0-9]{12,15}$"
                           type: string
-                          description: "The trader's EORI, only XI EORIs are valid"
-                          example: XI123456789012
+                          description: "The trader's EORI, only XI EORIs are valid."
                         nopWaiver:
                           type: boolean
                         localReferenceNumber:
@@ -2060,10 +2055,9 @@ paths:
                     type: object
                     properties:
                       fpoEORI:
-                        pattern: "^(GB|XI)[0-9]{12,15}$"
+                        pattern: "^[A-Z]{2}[0-9]{12,15}$"
                         type: string
                         description: GB or XI EORI for UK-C
-                        example: GB123456789012
                     additionalProperties: false
                     description: Details of UK-C declaration.
                   links:
@@ -2693,12 +2687,11 @@ paths:
                     type: object
                     properties:
                       traderEORI:
-                        pattern: "^[A-Z]{2}[0-9]{12,15}$"
+                        pattern: "^(?:(?:GB|XI)[0-9]{12,15}|(?!GB|XI)[A-Z]{2}[0-9A-Z]{1,15})$"
                         type: string
                         description: "The trader's EORI, GB EORIs are valid for all\
-                          \ direction movements, and XI EORIs are valid for only GB\
-                          \ to NI movements."
-                        example: GB123456789012
+                          \ direction movements, XI and EU EORIs are valid for only\
+                          \ GB to NI movements."
                       sAndSMasterRefNum:
                         pattern: "^[A-Z0-9-)(/]{1,200}$"
                         type: string
@@ -2735,8 +2728,7 @@ paths:
                       traderEORI:
                         pattern: "^[A-Z]{2}[0-9]{12,15}$"
                         type: string
-                        description: "The trader's EORI, only XI EORIs are valid"
-                        example: XI123456789012
+                        description: "The trader's EORI, only XI EORIs are valid."
                       nopWaiver:
                         type: boolean
                       localReferenceNumber:
@@ -2863,10 +2855,9 @@ paths:
                   type: object
                   properties:
                     fpoEORI:
-                      pattern: "^(GB|XI)[0-9]{12,15}$"
+                      pattern: "^[A-Z]{2}[0-9]{12,15}$"
                       type: string
                       description: GB or XI EORI for UK-C
-                      example: GB123456789012
                   additionalProperties: false
                   description: Details of UK-C declaration.
               additionalProperties: false
@@ -4418,11 +4409,10 @@ components:
         type: object
         properties:
           traderEORI:
-            pattern: "^[A-Z]{2}[0-9]{12,15}$"
+            pattern: "^(?:(?:GB|XI)[0-9]{12,15}|(?!GB|XI)[A-Z]{2}[0-9A-Z]{1,15})$"
             type: string
             description: "The trader's EORI, GB EORIs are valid for all direction\
-              \ movements, and XI EORIs are valid for only GB to NI movements."
-            example: GB123456789012
+              \ movements, XI and EU EORIs are valid for only GB to NI movements."
           sAndSMasterRefNum:
             pattern: "^[A-Z0-9-)(/]{1,200}$"
             type: string
@@ -4457,8 +4447,7 @@ components:
           traderEORI:
             pattern: "^[A-Z]{2}[0-9]{12,15}$"
             type: string
-            description: "The trader's EORI, only XI EORIs are valid"
-            example: XI123456789012
+            description: "The trader's EORI, only XI EORIs are valid."
           nopWaiver:
             type: boolean
           localReferenceNumber:
@@ -4621,21 +4610,15 @@ components:
       additionalProperties: false
       description: Declares Royal Mail Group or ETOE goods in the movement that do
         not require a customs declaration.
-    fpoEORI:
-      pattern: "^(GB|XI)[0-9]{12,15}$"
-      type: string
-      description: GB or XI EORI for UK-C
-      example: GB123456789012
     ukcDeclaration:
       required:
       - fpoEORI
       type: object
       properties:
         fpoEORI:
-          pattern: "^(GB|XI)[0-9]{12,15}$"
+          pattern: "^[A-Z]{2}[0-9]{12,15}$"
           type: string
           description: GB or XI EORI for UK-C
-          example: GB123456789012
       additionalProperties: false
       description: Details of UK-C declaration.
     post-gmr-schema_definitions:
@@ -4987,11 +4970,10 @@ components:
             type: object
             properties:
               traderEORI:
-                pattern: "^[A-Z]{2}[0-9]{12,15}$"
+                pattern: "^(?:(?:GB|XI)[0-9]{12,15}|(?!GB|XI)[A-Z]{2}[0-9A-Z]{1,15})$"
                 type: string
                 description: "The trader's EORI, GB EORIs are valid for all direction\
-                  \ movements, and XI EORIs are valid for only GB to NI movements."
-                example: GB123456789012
+                  \ movements, XI and EU EORIs are valid for only GB to NI movements."
               sAndSMasterRefNum:
                 pattern: "^[A-Z0-9-)(/]{1,200}$"
                 type: string
@@ -5027,8 +5009,7 @@ components:
               traderEORI:
                 pattern: "^[A-Z]{2}[0-9]{12,15}$"
                 type: string
-                description: "The trader's EORI, only XI EORIs are valid"
-                example: XI123456789012
+                description: "The trader's EORI, only XI EORIs are valid."
               nopWaiver:
                 type: boolean
               localReferenceNumber:
@@ -5153,10 +5134,9 @@ components:
           type: object
           properties:
             fpoEORI:
-              pattern: "^(GB|XI)[0-9]{12,15}$"
+              pattern: "^[A-Z]{2}[0-9]{12,15}$"
               type: string
               description: GB or XI EORI for UK-C
-              example: GB123456789012
           additionalProperties: false
           description: Details of UK-C declaration.
       additionalProperties: false
@@ -5892,11 +5872,10 @@ components:
             type: object
             properties:
               traderEORI:
-                pattern: "^[A-Z]{2}[0-9]{12,15}$"
+                pattern: "^(?:(?:GB|XI)[0-9]{12,15}|(?!GB|XI)[A-Z]{2}[0-9A-Z]{1,15})$"
                 type: string
                 description: "The trader's EORI, GB EORIs are valid for all direction\
-                  \ movements, and XI EORIs are valid for only GB to NI movements."
-                example: GB123456789012
+                  \ movements, XI and EU EORIs are valid for only GB to NI movements."
               sAndSMasterRefNum:
                 pattern: "^[A-Z0-9-)(/]{1,200}$"
                 type: string
@@ -5932,8 +5911,7 @@ components:
               traderEORI:
                 pattern: "^[A-Z]{2}[0-9]{12,15}$"
                 type: string
-                description: "The trader's EORI, only XI EORIs are valid"
-                example: XI123456789012
+                description: "The trader's EORI, only XI EORIs are valid."
               nopWaiver:
                 type: boolean
               localReferenceNumber:
@@ -6058,10 +6036,9 @@ components:
           type: object
           properties:
             fpoEORI:
-              pattern: "^(GB|XI)[0-9]{12,15}$"
+              pattern: "^[A-Z]{2}[0-9]{12,15}$"
               type: string
               description: GB or XI EORI for UK-C
-              example: GB123456789012
           additionalProperties: false
           description: Details of UK-C declaration.
         links:
@@ -6115,6 +6092,19 @@ components:
               rel: update-goods-movement-record
               href: /customs/goods-movement-system/movements/GMRB00000A9C
               method: PUT
+    traderEORI:
+      pattern: "^(?:(?:GB|XI)[0-9]{12,15}|(?!GB|XI)[A-Z]{2}[0-9A-Z]{1,15})$"
+      type: string
+      description: "The trader's EORI, GB EORIs are valid for all direction movements,\
+        \ XI and EU EORIs are valid for only GB to NI movements."
+    traderEORI_1:
+      pattern: "^[A-Z]{2}[0-9]{12,15}$"
+      type: string
+      description: "The trader's EORI, only XI EORIs are valid"
+    fpoEORI:
+      pattern: "^[A-Z]{2}[0-9]{12,15}$"
+      type: string
+      description: GB or XI EORI for UK-C
   parameters:
     acceptHeader:
       name: Accept

@@ -11,7 +11,7 @@ paths:
     post:
       summary: Create a Goods Movement Record (GMR)
       security:
-        - userRestricted:
+        - User-Restricted:
             - write:goods-movement-system
       parameters:
         - $ref: '#/components/parameters/contentTypeHeader'
@@ -235,7 +235,7 @@ paths:
     get:
       summary: List Goods Movement Records
       security:
-        - userRestricted:
+        - User-Restricted:
             - write:goods-movement-system
       parameters:
         - $ref: '#/components/parameters/acceptHeader'
@@ -328,7 +328,7 @@ paths:
     put:
       summary: Update Goods Movement Record
       security:
-        - userRestricted:
+        - User-Restricted:
             - write:goods-movement-system
       parameters:
         - $ref: '#/components/parameters/gmrId'
@@ -567,7 +567,7 @@ paths:
     get:
       summary: Get Goods Movement Record
       security:
-        - userRestricted:
+        - User-Restricted:
             - write:goods-movement-system
       parameters:
         - $ref: '#/components/parameters/gmrId'
@@ -719,7 +719,7 @@ paths:
     delete:
       summary: Delete a Goods Movement Record
       security:
-        - userRestricted:
+        - User-Restricted:
             - write:goods-movement-system
       parameters:
         - $ref: '#/components/parameters/acceptHeader'
@@ -1071,7 +1071,7 @@ paths:
                         ruleDescription: This type of declaration cannot be used in this GMR based on the Haulier type you selected. Check and try again.
 components:
   securitySchemes:
-    userRestricted:
+    User-Restricted:
       type: oauth2
       description: |
         HMRC supports OAuth 2.0 for authenticating user restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
